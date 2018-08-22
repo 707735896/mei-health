@@ -44,7 +44,7 @@
                     </span>
 
                     <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item>设置</el-dropdown-item>
+                        <el-dropdown-item  @click.native="setpsd">设置</el-dropdown-item>
                         <el-dropdown-item divided
                             @click.native="logout"
                             v-loading.fullscreen.lock="fullscreenLoading">退出</el-dropdown-item>
@@ -73,12 +73,15 @@ export default {
         this.fullscreenLoading = false;
         this.$router.push("/login/");
       }, 1500);
+    },
+    setpsd(){
+      this.$router.push("/setpsd");
     }
   }
 };
 </script>
 
-<style>
+<style scoped>
 .router-link-active {
   background: #4389f5 !important;
   color: #fff !important;

@@ -1,14 +1,24 @@
 <template>
     <div>
         <Header/>
-        <div class="content manage">
-            <el-tabs v-model="activeName"
+        <div class="group content">
+          <div class="layui-tab layui-tab-brief layui-tab01">
+            <!-- <el-tabs v-model="activeName"
                 @tab-click="handleClick">
                 <el-tab-pane label="组织架构"
-                    name="first">组织架构</el-tab-pane>
+                    name="first">
+                    <Table></Table>
+                    </el-tab-pane>
                 <el-tab-pane label="工作台"
-                    name="second">工作台</el-tab-pane>
-            </el-tabs>
+                    name="second">
+                    <Workbench></Workbench>
+                    </el-tab-pane>
+            </el-tabs> -->
+            <ul class="layui-tab-title layui-tab-title01">
+              <li style="margin-left:350px;"><router-link to='/manage/table'>组织架构</router-link></li>
+              <li style="margin-left:270px;"><router-link to='/manage/workbench'>工作台</router-link></li>
+            </ul>
+            </div>
         </div>
         <Footer/>
     </div>
@@ -17,10 +27,14 @@
 <script>
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
+import Table from "@/components/manage/table";
+import Workbench from "@/components/manage/workbench";
 export default {
   components: {
     Header,
-    Footer
+    Footer,
+    Table,
+    Workbench
   },
   data() {
     return {
@@ -36,14 +50,14 @@ export default {
 </script>
 
 
-<style>
-.manage {
+<style scoped>
+.group {
   box-sizing: border-box;
-  padding: 0 80px;
-  background: #fff;
+  /* padding: 0 80px; */
+  /* background: #fff; */
   overflow: hidden;
   margin-top: 25px;
-  padding-bottom: 300px;
+  height: 730px;
   width: 1200px;
 }
 .tabName {
@@ -68,5 +82,45 @@ export default {
 .el-tabs__item.is-active {
   color: #4389f5;
 }
+
+/*选项卡*/
+
+.layui-tab {
+	margin: 0;
+}
+
+.group .layui-tab01 .layui-tab-title {
+	width: 100%;
+	background: #fff;
+	border: none;
+	height: 50px;
+	margin: 20px 0;
+}
+
+.group .layui-tab01 .layui-tab01 {
+	margin: 25px 0;
+}
+
+.group .layui-tab01 .layui-tab-title li {
+	line-height: 50px;
+	font-weight: bold;
+	font-size: 18px;
+	color: #666
+}
+
+.group .layui-tab01 .layui-tab-title .layui-this:after {
+	height: 51px;
+}
+
+.group .layui-tab01 .layui-tab-content {
+	width: 100%;
+	float: left;
+	padding: 0;
+}
+.router-link-active {
+  color: #4389f5 !important;
+  border-bottom:2px solid #4389f5 !important;
+}
 </style>
+
 

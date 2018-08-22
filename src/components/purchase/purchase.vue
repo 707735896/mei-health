@@ -3,34 +3,18 @@
         <Header/>
         <div class="content Business">
             <div class="busIndex-list">
-                <a>
-                    <img src="../../assets/images/Business/business-icon01.png">
-                    <span>商务往来账</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon02.png">
-                    <span>商务应收款</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon03.png">
-                    <span>加盟查询</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon04.png">
-                    <span>商务赠送</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon05.png">
-                    <span>客户档案</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon06.png">
-                    <span>活动方案</span>
-                </a>
-                <a>
-                    <img src="../../assets/images/Business/business-icon07.png">
-                    <span>客户账户</span>
-                </a>
+                <div class="item">
+                    <img src="../../assets/images/icon_caigou.png">
+                    <p>采购申请</p>
+                </div>
+                <div class="item">
+                    <img src="../../assets/images/icon_baoxiao.png">
+                    <p>报销申请</p>
+                </div>
+                <div class="item">
+                    <img src="../../assets/images/icon_feiyong.png">
+                    <p>费用申请</p>
+                </div>
             </div>
         </div>
         <Footer/>
@@ -50,16 +34,18 @@ export default {
 <style>
 .content.Business {
   box-sizing: border-box;
-  padding: 0 80px;
+  /* padding: 0 80px; */
   background: #fff;
   overflow: hidden;
   margin-top: 25px;
-  padding-bottom: 300px;
   width: 1200px;
 }
 .Business .busIndex-list {
-  width: 130%;
-  float: left;
+  /* width: 130%;
+  float: left; */
+ 
+  text-align: center;
+  height: 730px;
 }
 .Business .busIndex-list > a {
   width: 385px;
@@ -74,5 +60,25 @@ export default {
   float: left;
   font-size: 18px;
   margin: 15px 0 0 10px;
+}
+.item{
+  display: inline-block;
+  /* flex: 1; */
+  width: 280px;
+  height: 340px;
+  margin: 200px 50px 0 50px;
+  border: 1px solid #eeeeee;
+  border-radius: 5px;
+}
+.item > p{
+    font-size: 20px
+}
+.item img {
+    margin-top: 35%;
+}
+.item:hover {
+  -webkit-box-shadow:0 0 10px #e2e5e5; 
+  -moz-box-shadow:0 0 10px #e2e5e5; 
+   box-shadow:0 0 10px #e2e5e5; 
 }
 </style>
