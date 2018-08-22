@@ -18,6 +18,7 @@
               <li style="margin-left:350px;"><router-link to='/manage/table'>组织架构</router-link></li>
               <li style="margin-left:270px;"><router-link to='/manage/workbench'>工作台</router-link></li>
             </ul>
+            <router-view></router-view>
             </div>
         </div>
         <Footer/>
