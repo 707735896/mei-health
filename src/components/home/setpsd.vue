@@ -5,17 +5,17 @@
       <el-form :model="ruleForm2" status-icon :rules="rules2" ref="ruleForm2" label-width="100px" class="demo-ruleForm set-form">
         <div class="update-psd">修改密码</div>
         <el-form-item label="旧密码：" prop="oldPass">
-          <el-input type="password" v-model.number="ruleForm2.oldPass" auto-complete="off" class="set-input"></el-input>
+          <el-input type="password" v-model="ruleForm2.oldPass" auto-complete="off" class="set-input" placeholder="请输入旧密码"></el-input>
         </el-form-item>
           <el-form-item label="新密码：" prop="pass">
-            <el-input type="password" v-model="ruleForm2.pass" auto-complete="off" class="set-input"></el-input>
+            <el-input type="password" v-model="ruleForm2.pass" auto-complete="off" class="set-input" placeholder="请输入新密码"></el-input>
           </el-form-item>
         <el-form-item label="请确认：" prop="checkPass">
-          <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" class="set-input"></el-input>
+          <el-input type="password" v-model="ruleForm2.checkPass" auto-complete="off" class="set-input" placeholder="请再次输入新密码"></el-input>
         </el-form-item>
         <el-form-item class="set-submit">
           <el-button type="primary" @click="submitForm('ruleForm2')">确认修改</el-button>
-          <el-button @click="resetForm('ruleForm2')">取消</el-button>
+          <el-button @click="resetForm('ruleForm2')" plain>取消</el-button>
         </el-form-item>
       </el-form>
         </div>
@@ -123,13 +123,13 @@ export default {
 .el-form-item__label,.el-form-item__error{
   margin-left: 250px
 }
-.el-button--primary {
+.set-submit .el-button--primary {
   font-size: 16px;
   width: 120px;
   height: 40px;
   border-radius: 20px
 }
-.el-button+.el-button {
+.set-submit .el-button+.el-button {
   border-radius: 20px;
   width: 100px
 }

@@ -28,14 +28,11 @@
 <script>
 import Header from "@/components/common/Header";
 import Footer from "@/components/common/Footer";
-import Table from "@/components/manage/table";
-import Workbench from "@/components/manage/workbench";
+
 export default {
   components: {
     Header,
-    Footer,
-    Table,
-    Workbench
+    Footer
   },
   data() {
     return {

@@ -5,10 +5,11 @@ import App from './App'
 import store from './vuex/store'
 import router from './router'
 import ElementUI from 'element-ui';
+import axios from 'axios'
 import 'element-ui/lib/theme-chalk/index.css';
 Vue.use(ElementUI);
 Vue.config.productionTip = false
-
+Vue.prototype.$http = axios
 
 /* eslint-disable no-new */
 new Vue({

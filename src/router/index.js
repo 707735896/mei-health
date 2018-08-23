@@ -1,8 +1,9 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/components/Login'
-import Home from '@/components/Home/Home'
-import Setpsd from '@/components/Home/Setpsd'
+import Home from '@/components/home/home'
+import Approval from '@/components/home/approval'
+import Setpsd from '@/components/home/setpsd'
 import Manage from '@/components/manage/manage'
 import Table from '@/components/manage/table'
 import Workbench from '@/components/manage/workbench'
@@ -17,65 +18,69 @@ import Documentation from '@/components/documentation/documentation'
 Vue.use(VueRouter)
 
 const router = new VueRouter({
-    // mode: 'history',
-    routes: [{
-      path: '/login',
-      name: 'Login',
-      component: Login,
-    },{
-      path: '/home',
-      name: 'Home',
-      component: Home,
-    },{
-      path: '/setpsd',
-      name: 'Setpsd',
-      component: Setpsd,
-    },{
-      path: '/manage',
-      name: 'Manage',
-      component: Manage,
-      redirect: '/manage/table',
-      children:[{
-        path: '/manage/table',
-        name: 'Table',
-        component: Table,
-      },
+  // mode: 'history',
+  routes: [{
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  }, {
+    path: '/home',
+    name: 'Home',
+    component: Home
+  }, {
+    path: '/setpsd',
+    name: 'Setpsd',
+    component: Setpsd,
+  }, {
+    path: '/approval',
+    name: 'Approval',
+    component: Approval
+  }, {
+    path: '/manage',
+    name: 'Manage',
+    component: Manage,
+    redirect: '/manage/table',
+    children: [{
+      path: '/manage/table',
+      name: 'Table',
+      component: Table
+    },
       {
         path: '/manage/workbench',
         name: 'Workbench',
         component: Workbench,
       }
     ]
-    },{
-      path: '/purchase',
-      name: 'Purchase',
-      component: Purchase,
-    },{
-      path: '/market',
-      name: 'Market',
-      component: Market,
-    }
-    ,{
+  }, {
+    path: '/purchase',
+    name: 'Purchase',
+    component: Purchase,
+  }, {
+    path: '/market',
+    name: 'Market',
+    component: Market,
+  }
+    , {
       path: '/business',
       name: 'Business',
       component: Business,
     }
-    ,{
+    , {
       path: '/educational',
       name: 'Educational',
       component: Educational,
     }
-    ,{
+    , {
       path: '/task',
       name: 'Task',
       component: Task,
     }
-    ,{
+    , {
       path: '/documentation',
       name: 'Documentation',
       component: Documentation,
     }
-    ]
-  })
-  
-  export default router
+  ]
+})
+
+export default router
