@@ -1,0 +1,23 @@
+{
+  "obj": [
+    {
+      "id": 1,
+      "deptNo": "D00001",
+      "deptName": "梅氏健康集团",
+      "status": "0"
+    },
+    {
+      "id": 2,
+      "deptNo": "D00002",
+      "deptName": "测试子部门",
+      "status": "1"
+    },
+    {
+      "id": 3,
+      "deptNo": "D00001D00003",
+      "deptName": "测试子部门2",
+      "pid": 1,
+      "status": "1"
+    }
+  ]
+}

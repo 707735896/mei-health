@@ -11,8 +11,6 @@
   text-align: center;
   color: #999;
   padding: 25px 0;
-  position: absolute;
-  bottom: 0;
 }
 </style>
 

@@ -31,11 +31,16 @@ export default {
     Header,Footer
   },
   data() {
-    var checkoldPass = (rule, value, callback) => {
-      if (!value) {
-        return callback(new Error("请输入密码"));
-      }
-    };
+    // var checkoldPass = (rule, value, callback) => {
+    //   if (value === "") {
+    //     callback(new Error("请输入旧密码"));
+    //   } else {
+    //     if (this.ruleForm2.oldPass !== "") {
+    //       this.$refs.ruleForm2.validateField("oldPass");
+    //     }
+    //     callback();
+    //   }
+    // };
     var validatePass = (rule, value, callback) => {
       if (value === "") {
         callback(new Error("请输入密码"));
@@ -57,14 +62,14 @@ export default {
     };
     return {
       ruleForm2: {
+        oldPass: "",
         pass: "",
-        checkPass: "",
-        Oldpass: ""
+        checkPass: ""
       },
       rules2: {
+        // oldPass: [{ validator: checkoldPass, trigger: "blur" }],
         pass: [{ validator: validatePass, trigger: "blur" }],
-        checkPass: [{ validator: validatePass2, trigger: "blur" }],
-        oldPass: [{ validator: checkoldPass, trigger: "blur" }]
+        checkPass: [{ validator: validatePass2, trigger: "blur" }]
       }
     };
   },
@@ -72,7 +77,22 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
+          let postData = {
+            oldPassword: this.ruleForm2.oldPass,
+            password: this.ruleForm2.pass
+          }
+          console.log(postData)
+          this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+          this.$http.post('http://192.168.0.22:8004/console/updatePassword', JSON.stringify(postData))
+            .then((res) => {
+              this.$message({
+                message: '修改成功',
+                type: 'success'
+              });
+            })
+            .catch((error) => {
+              console.log(error)
+            })
         } else {
           console.log("error submit!!");
           return false;

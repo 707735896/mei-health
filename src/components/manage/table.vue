@@ -17,7 +17,7 @@
                   <span class="group-sum">(287)</span>
                 </h5>
                 <el-tree
-                  :data="data"
+                  :data="treeData"
                   :props="defaultProps"
                   accordion
                   @node-click="handleNodeClick">
@@ -37,13 +37,13 @@
             </a>
           </h6>
           <div class="right-select">
-            <a class="active">添加子部门</a>
-            <a class="addPeople">添加人员</a>
+            <a @click="outerDeptVisible = true">添加子部门</a>
+            <a class="addPeople" @click="outerUserVisible = true">添加人员</a>
             <a>调整部门</a>
             <a>修改</a>
             <a>删除</a>
           </div>
-          <el-table ref="multipleTable" :data="tableData3" tooltip-effect="dark" style="width: 100%"
+          <el-table ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%"
                     @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55">
             </el-table-column>
@@ -71,6 +71,117 @@
             layout="total, sizes, prev, pager, next, jumper"
             :total="400" style="margin-top: 20px;">
           </el-pagination>
+          <!--添加部门-->
+          <div class="addDept">
+            <el-dialog :visible.sync="outerDeptVisible" width="500px">
+              <el-dialog width="850px" :visible.sync="innerDeptVisible" append-to-body>
+                <div class="inner-title">部门负责人</div>
+                <div class="dept-transfer">
+                  <el-transfer
+                    :titles="['部门人员', '已选负责人']"
+                    filterable
+                    :filter-method="filterMethod"
+                    filter-placeholder="请输入城市拼音"
+                    v-model="value2"
+                    :data="data2">
+                  </el-transfer>
+                </div>
+                <div slot="footer" class="dialog-footer" style="text-align: center">
+                  <el-button type="primary">确 定</el-button>
+                  <el-button @click="innerDeptVisible = false">取 消</el-button>
+                </div>
+              </el-dialog>
+              <div slot="footer" class="dialog-footer">
+                <!--<el-button @click="outerDeptVisible = false">取 消</el-button>-->
+              </div>
+              <div class="dept-title">添加部门</div>
+              <el-form :model="deptForm" status-icon :rules="dept" ref="deptForm" label-width="100px"
+                       class="demo-ruleForm">
+                <el-form-item label="部门名称" prop="deptName">
+                  <el-input v-model="deptForm.deptName"></el-input>
+                </el-form-item>
+                <el-form-item label="上级部门" prop="pDept">
+                  <el-input v-model="deptForm.pDept"></el-input>
+                </el-form-item>
+                <el-form-item label="部门负责人" prop="deptManager">
+                  <el-input v-model="deptForm.deptManager" @click.native="innerDeptVisible = true"></el-input>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitForm('deptForm')">保存</el-button>
+                  <el-button @click="outerDeptVisible = false">取消</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
+          </div>
+
+          <!--添加成员-->
+          <div class="addUser">
+            <el-dialog :visible.sync="outerUserVisible" width="500px">
+              <!--<el-dialog width="850px" :visible.sync="innerUserVisible" append-to-body>-->
+              <!--<div class="inner-title">部门负责人</div>-->
+              <!--<div class="dept-transfer">-->
+              <!--<el-transfer-->
+              <!--:titles="['部门人员', '已选负责人']"-->
+              <!--filterable-->
+              <!--:filter-method="filterMethod"-->
+              <!--filter-placeholder="请输入城市拼音"-->
+              <!--v-model="value2"-->
+              <!--:data="data2">-->
+              <!--</el-transfer>-->
+              <!--</div>-->
+              <!--<div slot="footer" class="dialog-footer" style="text-align: center">-->
+              <!--<el-button type="primary">确 定</el-button>-->
+              <!--<el-button @click="innerUserVisible = false">取 消</el-button>-->
+              <!--</div>-->
+              <!--</el-dialog>-->
+              <div slot="footer" class="dialog-footer">
+                <!--<el-button @click="outerDeptVisible = false">取 消</el-button>-->
+              </div>
+              <div class="dept-title">添加人员</div>
+              <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                <el-form-item label="姓名" prop="name" placeholder="请输入姓名">
+                  <el-input v-model="ruleForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="部门" prop="dept">
+                  <el-select v-model="ruleForm.dept" placeholder="请选择部门" style="width: 360px">
+                    <el-option label="区域一" value="shanghai"></el-option>
+                    <el-option label="区域二" value="beijing"></el-option>
+                  </el-select>
+                </el-form-item>
+                <el-form-item label="职位" prop="position" placeholder="请输入职位">
+                  <el-input v-model="ruleForm.position"></el-input>
+                </el-form-item>
+                <el-form-item label="手机" prop="phone" placeholder="请输入手机">
+                  <el-input v-model="ruleForm.phone"></el-input>
+                </el-form-item>
+                <el-form-item label="邮箱" prop="email" placeholder="请输入邮箱">
+                  <el-input v-model="ruleForm.email"></el-input>
+                </el-form-item>
+                <el-form-item label="出生日期" required>
+                  <el-col :span="11">
+                    <el-form-item prop="birthday">
+                      <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.birthday"
+                                      style="width: 100%;"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </el-form-item>
+                <el-form-item label="入职时间" required>
+                  <el-col :span="11">
+                    <el-form-item prop="entryDate">
+                      <el-date-picker type="date" placeholder="选择日期" v-model="ruleForm.entryDate"
+                                      style="width: 100%;"></el-date-picker>
+                    </el-form-item>
+                  </el-col>
+                </el-form-item>
+                <el-form-item>
+                  <el-button type="primary" @click="submitUserClose('ruleForm')">保存</el-button>
+                  <el-button type="primary" @click="submitUser('ruleForm')">保存并继续添加</el-button>
+                  <el-button @click="resetForm('ruleForm')">重置</el-button>
+                </el-form-item>
+              </el-form>
+            </el-dialog>
+          </div>
+
         </div>
       </div>
     </div>
@@ -78,90 +189,110 @@
 </template>
 
 <script>
+  import {toTree} from '../../assets/js/toTree.js'
+
   export default {
+    created() {
+      this.getdeptList();
+    },
     data() {
+      const generateData2 = _ => {
+        const data = [];
+        const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
+        const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          });
+        });
+        return data;
+      };
+      var checkDeptName = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('部门名称不能为空'));
+        }
+      };
+      var checkPdept = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('上级部门不能为空'));
+        }
+      };
+      var checkDeptManager = (rule, value, callback) => {
+        if (value === '') {
+          callback(new Error('部门负责人不能为空'));
+        }
+      };
       return {
-        tableData3: [{
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+        data2: generateData2(),
+        value2: [],
+        filterMethod(query, item) {
+          return item.pinyin.indexOf(query) > -1;
         },
-          {
-            date: "2016-05-02",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-04",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-01",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-08",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-06",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          },
-          {
-            date: "2016-05-07",
-            name: "王小虎",
-            address: "上海市普陀区金沙江路 1518 弄"
-          }
-        ],
         multipleSelection: [],
         currentPage1: 5,
         activeName2: 'first',
-        data: [{
-          label: '互联网中心',
-          children: [{
-            label: '管理层',
-            children: [{
-              label: '信息部'
-            }]
-          }]
-        }, {
-          label: '人事行政中心',
-          children: [{
-            label: '管理层',
-            children: [{
-              label: '信息部'
-            }]
-          }, {
-            label: '信息部',
-            children: [{
-              label: '信息部'
-            }]
-          }]
-        }, {
-          label: '商务管理中心',
-          children: [{
-            label: '信息部',
-            children: [{
-              label: '信息部'
-            }]
-          }, {
-            label: '信息部',
-            children: [{
-              label: '信息部'
-            }]
-          }]
-        }],
+        tableData: [],
+        treeData: [],
         defaultProps: {
           children: 'children',
-          label: 'label'
+          label: 'deptName'
+        },
+        outerDeptVisible: false,
+        innerDeptVisible: false,
+        outerUserVisible: false,
+        innerUserVisible: false,
+        deptForm: {
+          deptName: '',
+          pDept: '',
+          deptManager: ''
+        },
+        dept: {
+          deptName: [
+            {validator: checkDeptName, trigger: 'blur'}
+          ],
+          pDept: [
+            {validator: checkPdept, trigger: 'blur'}
+          ],
+          deptManager: [
+            {validator: checkDeptManager, trigger: 'blur'}
+          ]
+        },
+        ruleForm: {
+          name: '',
+          dept: '',
+          position: '',
+          phone: '',
+          email: '',
+          birthday: '',
+          entryDate: ''
+        },
+        rules: {
+          name: [
+            {required: true, message: '请输入姓名', trigger: 'blur'},
+          ],
+          dept: [
+            {required: true, message: '请选择部门', trigger: 'change'}
+          ],
+          position: [
+            {required: true, message: '请输入职位', trigger: 'blur'},
+          ],
+          phone: [
+            {required: true, message: '请输入手机', trigger: 'blur'},
+          ],
+          email: [
+            {required: true, message: '请输入邮箱', trigger: 'blur'},
+          ],
+          birthday: [
+            {type: 'date', required: true, message: '请选择出生日期', trigger: 'change'}
+          ],
+          entryDate: [
+            {type: 'date', required: true, message: '请选择入职时间', trigger: 'change'}
+          ]
         }
       };
     },
-
     methods: {
       handleClick(tab, event) {
         console.log(tab, event);
@@ -185,10 +316,114 @@
         console.log(`当前页: ${val}`);
       },
       handleNodeClick(data) {
-        console.log(data);
+        let postData = {
+          pageSize: 10,
+          pageNumber: 10
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post('http://192.168.0.22:8004/web/user/selectUser', JSON.stringify(postData))
+          .then((res) => {
+            var datas = res.data.obj;
+            console.log(datas)
+            // this.tableData = datas
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
+      getdeptList() {
+        let postData = {
+          pageSize: 0,
+          pageNumber: 0
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post('http://192.168.0.22:8004/web/dept/deptList', JSON.stringify(postData))
+          .then((res) => {
+            var datas = res.data.obj;
+            var newList = toTree(datas, 'id', 'pid', 'children')
+            this.treeData = newList;
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
+      submitForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            alert('submit!');
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      submitUserClose(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let postData = {
+              userName: this.ruleForm.name,
+              dept: this.ruleForm.dept,
+              jobName: this.ruleForm.position,
+              phone: this.ruleForm.phone,
+              email: this.ruleForm.email,
+              birthday: this.ruleForm.birthday,
+              entryDate: this.ruleForm.entryDate
+            }
+            this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+            this.$http.post('http://192.168.0.22:8004/web/user/addUser', JSON.stringify(postData))
+              .then((res) => {
+                console.log(res)
+                this.$message({
+                  message: '保存成功',
+                  type: 'success'
+                });
+                this.outerUserVisible = false
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      submitUser(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let postData = {
+              userName: this.ruleForm.name,
+              dept: this.ruleForm.dept,
+              jobName: this.ruleForm.position,
+              phone: this.ruleForm.phone,
+              email: this.ruleForm.email,
+              birthday: this.ruleForm.birthday,
+              entryDate: this.ruleForm.entryDate
+            }
+            this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+            this.$http.post('http://192.168.0.22:8004/web/user/addUser', JSON.stringify(postData))
+              .then((res) => {
+                console.log(res)
+                this.$message({
+                  message: '保存成功',
+                  type: 'success'
+                });
+                this.$refs[formName].resetFields();
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetForm(formName) {
+        this.$refs[formName].resetFields();
       }
     }
-  };
+  }
 </script>
 
 <style scoped>
@@ -391,4 +626,62 @@
     font-size: 15px;
   }
 
+  .addDept .el-dialog {
+    margin-right: 0;
+  }
+
+  .addDept .el-dialog_ {
+    text-align: center;
+  }
+
+  .addDept .el-input__inner {
+    width: 290px;
+  }
+
+  .addDept .el-form-item__content {
+    text-align: center;
+  }
+
+  .addDept .el-form-item__error {
+    left: 35px;
+  }
+
+  .dept-transfer .el-transfer-panel {
+  }
+
+  .dept-transfer .el-transfer {
+    margin: 0 auto;
+    width: 500px;
+  }
+
+  .dept-title {
+    height: 45px;
+    line-height: 45px;
+    background: #eeeeee;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    width: 470px;
+    margin: 20px 0;
+  }
+
+  .inner-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+
+  /*添加人员*/
+  .addUser .el-dialog {
+    margin-right: 0;
+  }
+
+  .addUser .el-input--prefix .el-input__inner {
+    width: 360px;
+  }
+
+  .addUser .el-button + .el-button, .addUser .el-button--primary {
+    border-radius: 20px;
+  }
 </style>

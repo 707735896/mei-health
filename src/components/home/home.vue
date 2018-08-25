@@ -26,12 +26,12 @@
                 <span class="desk-txt-pos">2</span>
               </span>
             </router-link>
-            <a class="desk-list-li">
+            <router-link class="desk-list-li" to="/workflow">
               <img src="../../assets/images/btn_xinjian.png">
               <span class="desk-txt">新建工作流
-                                <span class="desk-txt-pos">2</span>
-                            </span>
-            </a>
+               <span class="desk-txt-pos">2</span>
+              </span>
+            </router-link>
             <a class="desk-list-li">
               <img src="../../assets/images/btn_qingjia.png">
               <span class="desk-txt">请假

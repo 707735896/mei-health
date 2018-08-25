@@ -2,20 +2,27 @@
     <div>
         <Header/>
         <div class="content Business">
-            <div class="busIndex-list">
-                <div class="item">
-                    <img src="../../assets/images/icon_caigou.png">
-                    <p>采购申请</p>
-                </div>
-                <div class="item">
-                    <img src="../../assets/images/icon_baoxiao.png">
-                    <p>报销申请</p>
-                </div>
-                <div class="item">
+            <ul class="busIndex-list">
+                <li class="item">
+                    <router-link to='/pr'>
+                      <img src="../../assets/images/icon_caigou.png">
+                      <p>采购申请</p>
+                    </router-link>
+                </li>
+                <li class="item">
+                    <router-link to='/paid'>
+                      <img src="../../assets/images/icon_baoxiao.png">
+                      <p>报销申请</p>
+                    </router-link>
+                </li>
+                <li class="item">
+                  <router-link to='/cost'>
                     <img src="../../assets/images/icon_feiyong.png">
                     <p>费用申请</p>
-                </div>
-            </div>
+                  </router-link>
+                </li>
+              <router-view></router-view>
+            </ul>
         </div>
         <Footer/>
     </div>
