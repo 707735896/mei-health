@@ -54,14 +54,14 @@
         <el-form :model="overTimeForm" :rules="rules" ref="overTimeForm" label-width="100px" class="demo-overTimeForm">
           <el-form-item label="加班类型：" prop="type">
             <el-select v-model="overTimeForm.type" placeholder="请选择加班类型">
-              <el-option label="平常加班" value="pcjb"></el-option>
-              <el-option label="双休日加班" value="sxr"></el-option>
+              <el-option label="平常加班" value="平常加班"></el-option>
+              <el-option label="双休日加班" value="双休日加班"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="核算方式：" prop="mode">
             <el-select v-model="overTimeForm.mode" placeholder="请选择核算方式">
-              <el-option label="调休" value="tx"></el-option>
-              <el-option label="工资" value="gz"></el-option>
+              <el-option label="调休" value="调休"></el-option>
+              <el-option label="工资" value="工资"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="加班开始时间：" required>
@@ -77,8 +77,8 @@
             <el-input type="textarea" v-model="overTimeForm.desc"></el-input>
           </el-form-item>
           <el-form-item style="text-align: center">
-            <el-button type="primary" @click="submitForm('overTimeForm')">提 交</el-button>
-            <el-button @click="resetForm('overTimeForm')">取 消</el-button>
+            <el-button type="primary" @click="submitOverTimeForm('overTimeForm')">提 交</el-button>
+            <el-button @click="resetOverTimeForm('overTimeForm')">取 消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -91,7 +91,7 @@
         <div class="workbench-title">请假申请</div>
         <el-form :model="leaveForm" :rules="leaveRules" ref="leaveForm" label-width="100px" class="demo-leaveForm">
           <el-form-item label="请假类型：" prop="type">
-            <el-select v-model="leaveForm.type" placeholder="请选择加班类型">
+            <el-select v-model="leaveForm.type" placeholder="请选择加班类型" @change="opentx">
               <el-option label="事假" value="sj"></el-option>
               <el-option label="调休假" value="txj"></el-option>
               <el-option label="病假" value="bj"></el-option>
@@ -107,18 +107,21 @@
           <el-form-item label="结束时间：" required>
             <el-date-picker v-model="leaveForm.date2" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="可用加班时长：" prop="timeLength">
+          <el-form-item label="请假时长：" prop="leaveTime">
+            <el-input v-model="leaveForm.leaveTime" style="width: 100px"></el-input>
+          </el-form-item>
+          <el-form-item label="可用加班时长：" prop="timeLength1" v-show="leaveForm.isShow">
             <el-input v-model="leaveForm.timeLength1" style="width: 100px"></el-input>
           </el-form-item>
-          <el-form-item label="调休时长：" prop="timeLength">
+          <el-form-item label="调休时长：" prop="timeLength2" v-show="leaveForm.isShow">
             <el-input v-model="leaveForm.timeLength2" style="width: 100px"></el-input>
           </el-form-item>
-          <el-form-item label="加班原因：" prop="desc" style="width: 100px">
-            <el-input type="textarea" v-model="overTimeForm.desc"></el-input>
+          <el-form-item label="请假原因：" prop="desc" style="width: 100px">
+            <el-input type="textarea" v-model="leaveForm.desc"></el-input>
           </el-form-item>
           <el-form-item style="text-align: center">
-            <el-button type="primary" @click="submitForm('leaveForm')">提 交</el-button>
-            <el-button @click="resetForm('leaveForm')">取 消</el-button>
+            <el-button type="primary" @click="submitLeaveForm('leaveForm')">提 交</el-button>
+            <el-button @click="resetLeaveForm('leaveForm')">取 消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -128,7 +131,7 @@
     <!--外出申请-->
     <div class="addGo">
       <el-dialog :visible.sync="openGo" width="500px">
-        <div class="workbench-title">加班申请</div>
+        <div class="workbench-title">出差申请</div>
         <el-form :model="goForm" :rules="goRules" ref="goForm" label-width="100px" class="demo-overTimeForm">
           <el-form-item label="外出类型：" prop="type">
             <el-select v-model="goForm.type" placeholder="请选择加班类型">
@@ -142,15 +145,15 @@
           <el-form-item label="外出结束时间：" required>
             <el-date-picker v-model="goForm.date2" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
-          <el-form-item label="外出时长：" prop="timeLength">
+          <el-form-item label="外出时长：" prop="timeLength" @click="calculation">
             <el-input v-model="goForm.timeLength" style="width: 100px"></el-input>
           </el-form-item>
-          <el-form-item label="加班原因：" prop="desc" style="width: 100px">
+          <el-form-item label="外出原因：" prop="desc" style="width: 100px">
             <el-input type="textarea" v-model="goForm.desc"></el-input>
           </el-form-item>
           <el-form-item style="text-align: center">
-            <el-button type="primary" @click="submitForm('goForm')">提 交</el-button>
-            <el-button @click="resetForm('goForm')">取 消</el-button>
+            <el-button type="primary" @click="submitGoForm('goForm')">提 交</el-button>
+            <el-button @click="resetGoForm('goForm')">取 消</el-button>
           </el-form-item>
         </el-form>
       </el-dialog>
@@ -175,9 +178,11 @@
           desc: ''
         },
         leaveForm: {
+          isShow: false,
           type: '',
           date1: '',
           date2: '',
+          leaveTime: '',
           timeLength1: '',
           timeLength2: '',
           desc: ''
@@ -219,12 +224,12 @@
           date2: [
             {type: 'datetime', required: true, message: '请选择时间', trigger: 'change'}
           ],
-          timeLength1: [
-            {required: true, message: '请输入加班时长', trigger: 'blur'}
-          ],
-          timeLength2: [
-            {required: true, message: '请输入加班时长', trigger: 'blur'}
-          ],
+          // timeLength1: [
+          //   {required: true, message: '请输入请假时长', trigger: 'blur'}
+          // ],
+          // timeLength2: [
+          //   {required: true, message: '请输入可用加班时长', trigger: 'blur'}
+          // ],
           // desc: [
           //   {required: true, message: '请填写加班原因', trigger: 'blur'}
           // ]
@@ -249,19 +254,148 @@
       }
     },
     methods: {
-      submitForm(formName) {
+      opentx() {
+        if (this.leaveForm.type === 'txj') {
+          this.leaveForm.isShow = true;
+        } else {
+          this.leaveForm.isShow = false;
+        }
+      },
+      submitOverTimeForm(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
-            alert('submit!');
+            let postData = {
+              processType: 2,
+              type: this.overTimeForm.type,
+              mode: this.overTimeForm.mode,
+              startTime: this.overTimeForm.date1,
+              endTime: this.overTimeForm.date2,
+              totalDay: this.overTimeForm.timeLength,
+              remark: this.overTimeForm.desc
+            }
+            console.log(postData)
+            this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+            this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+              .then((res) => {
+                console.log(res)
+                this.$message({
+                  message: '保存成功',
+                  type: 'success'
+                });
+                this.openOvertime = false
+              })
+              .catch((error) => {
+                console.log(error)
+              })
           } else {
             console.log('error submit!!');
             return false;
           }
         });
       },
-      resetForm(formName) {
+      resetOverTimeForm(formName) {
         this.$refs[formName].resetFields();
+      },
+      submitLeaveForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            if (this.leaveForm.type === 'txj') {
+              let postData = {
+                processType: 1,
+                type: this.leaveForm.type,
+                startTime: this.leaveForm.date1,
+                endTime: this.leaveForm.date2,
+                totalDay: this.leaveForm.timeLength1,
+                supplementTotalDay: this.leaveForm.timeLength2,
+                remark: this.leaveForm.desc
+              }
+              console.log(postData)
+              this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+              this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+                .then((res) => {
+                  console.log(res)
+                  this.$message({
+                    message: '保存成功',
+                    type: 'success'
+                  });
+                  this.openLeave = false
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+            } else {
+              let postData = {
+                processType: 1,
+                type: this.leaveForm.type,
+                startTime: this.leaveForm.date1,
+                endTime: this.leaveForm.date2,
+                supplementTotalDay: this.leaveForm.leaveTime,
+                remark: this.leaveForm.desc
+              }
+              this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+              this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+                .then((res) => {
+                  console.log(res)
+                  this.$message({
+                    message: '保存成功',
+                    type: 'success'
+                  });
+                  this.openLeave = false
+                })
+                .catch((error) => {
+                  console.log(error)
+                })
+            }
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetLeaveForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      submitGoForm(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            let postData = {
+              processType: 3,
+              type: this.goForm.type,
+              startTime: this.goForm.date1,
+              endTime: this.goForm.date2,
+              supplementTotalDay: this.goForm.timeLength,
+              remark: this.goForm.desc
+            }
+            console.log(postData)
+            this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+            this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+              .then((res) => {
+                console.log(res)
+                this.$message({
+                  message: '保存成功',
+                  type: 'success'
+                });
+                this.openGo = false
+              })
+              .catch((error) => {
+                console.log(error)
+              })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+      },
+      resetGoForm(formName) {
+        this.$refs[formName].resetFields();
+      },
+      calculation(){
+        var date3 = this.date2.getTime() - this.date1.getTime();
+        var days = Math.floor(date3/(24*3600*1000));
+        console.log(days)
+        this.goForm.timeLength = days
       }
+
     }
   }
 </script>

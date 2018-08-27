@@ -115,6 +115,7 @@ export default {
   margin-top: 25px;
   padding-bottom: 300px;
   width: 1200px;
+  height: 730px;
 }
 
 .set-form {
