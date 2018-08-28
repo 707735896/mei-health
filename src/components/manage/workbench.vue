@@ -143,9 +143,9 @@
             <el-date-picker v-model="goForm.date1" type="datetime" placeholder="选择日期时间"></el-date-picker>
           </el-form-item>
           <el-form-item label="外出结束时间：" required>
-            <el-date-picker v-model="goForm.date2" type="datetime" placeholder="选择日期时间"></el-date-picker>
+            <el-date-picker v-model="goForm.date2" type="datetime" placeholder="选择日期时间" @change="calculation"></el-date-picker>
           </el-form-item>
-          <el-form-item label="外出时长：" prop="timeLength" @click="calculation">
+          <el-form-item label="外出时长：" prop="timeLength">
             <el-input v-model="goForm.timeLength" style="width: 100px"></el-input>
           </el-form-item>
           <el-form-item label="外出原因：" prop="desc" style="width: 100px">

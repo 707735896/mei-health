@@ -107,7 +107,7 @@
                   <el-input v-model="deptForm.deptManager" @click.native="innerDeptVisible = true"></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="submitForm('deptForm')">保存</el-button>
+                  <el-button type="primary" @click="submitDeptForm('deptForm')">保存</el-button>
                   <el-button @click="outerDeptVisible = false">取消</el-button>
                 </el-form-item>
               </el-form>
@@ -261,7 +261,7 @@
         },
         ruleForm: {
           name: '',
-          dept: '',
+          deptId: '',
           position: '',
           phone: '',
           email: '',
@@ -272,7 +272,7 @@
           name: [
             {required: true, message: '请输入姓名', trigger: 'blur'},
           ],
-          dept: [
+          deptId: [
             {required: true, message: '请选择部门', trigger: 'change'}
           ],
           position: [
@@ -318,14 +318,15 @@
       handleNodeClick(data) {
         let postData = {
           pageSize: 10,
-          pageNumber: 10
+          pageNumber: 10,
+          deptId: 1
         }
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
         this.$http.post('http://192.168.0.22:8004/web/user/selectUser', JSON.stringify(postData))
           .then((res) => {
-            var datas = res.data.obj;
+            var datas = res.data.obj.rows;
             console.log(datas)
-            // this.tableData = datas
+            this.tableData = datas
           })
           .catch((error) => {
             console.log(error)
@@ -339,6 +340,7 @@
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
         this.$http.post('http://192.168.0.22:8004/web/dept/deptList', JSON.stringify(postData))
           .then((res) => {
+            console.log(res)
             var datas = res.data.obj;
             var newList = toTree(datas, 'id', 'pid', 'children')
             this.treeData = newList;
@@ -347,22 +349,34 @@
             console.log(error)
           })
       },
-      submitForm(formName) {
-        this.$refs[formName].validate((valid) => {
-          if (valid) {
-            alert('submit!');
-          } else {
-            console.log('error submit!!');
-            return false;
-          }
-        });
+      submitDeptForm(formName) {
+        let postData = {
+          deptName: this.deptForm.deptName,
+          pid: 1,
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post('http://192.168.0.22:8004//web/dept/addDept', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            });
+            this.$refs[formName].resetFields();
+            this.getdeptList();
+            this.outerDeptVisible = false
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+
       },
       submitUserClose(formName) {
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let postData = {
               userName: this.ruleForm.name,
-              dept: this.ruleForm.dept,
+              deptId: this.ruleForm.deptId,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
@@ -393,7 +407,7 @@
           if (valid) {
             let postData = {
               userName: this.ruleForm.name,
-              dept: this.ruleForm.dept,
+              deptId: 2,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,

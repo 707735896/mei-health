@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+import vuexAlong from 'vuex-along'
 Vue.use(Vuex);
 
 //Vuex配置
@@ -8,10 +8,8 @@ const store = new Vuex.Store({
   state: {
     domain: 'http://test.example.com', //保存后台请求的地址，修改时方便（比方说从测试服改成正式服域名）
     userInfo: { //保存用户信息
-      nick: null,
-      ulevel: null,
-      uid: null,
-      portrait: null
+      userName: null,
+      password:null
     }
   },
   mutations: {
@@ -19,7 +17,8 @@ const store = new Vuex.Store({
     updateUserInfo(state, newUserInfo) {
       state.userInfo = newUserInfo;
     }
-  }
+  },
+  plugins: [vuexAlong]
 })
 
 //设置cookie,增加到vue实例方便全局调用

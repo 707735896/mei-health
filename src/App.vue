@@ -11,47 +11,43 @@
     name: "app",
     data() {
       return {
-        isLogin: false,
-        userInfo: {
-          //保存用户信息
-          nick: null,
-          ulevel: null,
-          uid: null,
-          portrait: null
-        }
+        // isLogin: false,
+        // userInfo: {
+        //   //保存用户信息
+        //   userNo: null,
+        //   portrait: null
+        // }
       };
     },
     mounted() {
       //组件开始挂载时获取用户信息
-      this.getUserInfo();
+      // this.getUserInfo();
     },
 
     methods: {
       //请求用户的一些信息
-      getUserInfo() {
-        //发送http请求获取，这里写死作演示
-        this.userInfo = {
-          nick: "Doterlin",
-          ulevel: 20,
-          uid: "10000",
-          portrait:
-            "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1534403753315&di=daba81f90b14dcdd76bcc989e93479bc&imgtype=0&src=http%3A%2F%2Fpic31.nipic.com%2F20130717%2F12788596_144714507000_2.jpg"
-        };
-
-        //实例开发中这里会向服务端请求数据
-        //如下(用了vue-resource):
-        /*ts.$http.get(url, {
-          //参数
-          "params":{}
-        }).then((response) => {
-          //Success
-        }, (response) => {
-          //Error
-        });*/
-
-        //提交mutation到Store
-        this.$store.commit("updateUserInfo", this.userInfo);
-      }
+      // getUserInfo() {
+      //   //发送http请求获取，这里写死作演示
+      //   this.userInfo = {
+      //     userNo: "员工1",
+      //     portrait:
+      //       "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1534403753315&di=daba81f90b14dcdd76bcc989e93479bc&imgtype=0&src=http%3A%2F%2Fpic31.nipic.com%2F20130717%2F12788596_144714507000_2.jpg"
+      //   };
+      //
+      //   //实例开发中这里会向服务端请求数据
+      //   //如下(用了vue-resource):
+      //   /*ts.$http.get(url, {
+      //     //参数
+      //     "params":{}
+      //   }).then((response) => {
+      //     //Success
+      //   }, (response) => {
+      //     //Error
+      //   });*/
+      //
+      //   //提交mutation到Store
+      //   this.$store.commit("updateUserInfo", this.userInfo);
+      // }
     }
   };
 </script>
