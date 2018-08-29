@@ -170,4 +170,8 @@
     width: 1200px;
     margin: 0 auto;
   }
+
+  .el-button--primary, .el-button, .el-button--danger {
+    border-radius: 20px;
+  }
 </style>

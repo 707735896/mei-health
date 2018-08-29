@@ -1,15 +1,18 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import vuexAlong from 'vuex-along'
+
 Vue.use(Vuex);
 
 //Vuex配置
 const store = new Vuex.Store({
   state: {
-    domain: 'http://test.example.com', //保存后台请求的地址，修改时方便（比方说从测试服改成正式服域名）
+    local:'http://192.168.0.22:8004',
+    domain: 'http://47.100.109.74:9528', //保存后台请求的地址，修改时方便（比方说从测试服改成正式服域名）
     userInfo: { //保存用户信息
+      id: null,
       userName: null,
-      password:null
+      password: null
     }
   },
   mutations: {
@@ -25,8 +28,8 @@ const store = new Vuex.Store({
 //vue全局调用的理由是，有些组件所用到的接口可能需要session验证，session从cookie获取
 //当然，如果session保存到vuex的话除外
 Vue.prototype.setCookie = (c_name, value, expiredays) => {
-  var exdate = new Date();　　　　
-  exdate.setDate(exdate.getDate() + expiredays);　　　　
+  var exdate = new Date();
+  exdate.setDate(exdate.getDate() + expiredays);
   document.cookie = c_name + "=" + escape(value) + ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString());
 }
 
@@ -38,6 +41,7 @@ function getCookie(name) {
   else
     return null;
 }
+
 Vue.prototype.getCookie = getCookie;
 
 //删除cookie

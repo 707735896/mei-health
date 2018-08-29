@@ -66,18 +66,19 @@
         //设置在登录状态
         this.isLoging = true;
 
-        //请求后端,比如:
+        //请求后端:
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post('http://192.168.0.22:8004/console/login', JSON.stringify(postData))
+        this.$http.post(this.$store.state.local + '/console/login', JSON.stringify(postData))
           .then((response) => {
             console.log(response)
             if (response.data.code == 0) {
               let expireDays = 1000 * 60 * 60 * 24 * 15;
               this.setCookie('session', response.data.session, expireDays);
               let userInfo = {
+                id: response.data.obj.id,
                 userName: response.data.obj.userName,
                 password: response.data.obj.password
-            }
+              }
               this.$store.commit("updateUserInfo", userInfo);
               //登录成功后
               this.isLoging = false;

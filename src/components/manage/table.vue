@@ -327,7 +327,7 @@
           deptId: 1
         }
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post('http://192.168.0.22:8004/web/user/selectUser', JSON.stringify(postData))
+        this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
           .then((res) => {
             var datas = res.data.obj.rows;
             console.log(datas)
@@ -343,7 +343,7 @@
           pageNumber: 0
         }
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post('http://192.168.0.22:8004/web/dept/deptList', JSON.stringify(postData))
+        this.$http.post(this.$store.state.local + '/web/dept/deptList', JSON.stringify(postData))
           .then((res) => {
             console.log(res)
             var datas = res.data.obj;
@@ -361,7 +361,7 @@
           pageNumber: 0
         }
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post('http://192.168.0.22:8004/web/dept/deptList', JSON.stringify(postData))
+        this.$http.post(this.$store.state.local + '/web/dept/deptList', JSON.stringify(postData))
           .then((res) => {
             console.log(res)
             var datas = res.data.obj;
@@ -377,7 +377,7 @@
           pid: 1,
         }
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post('http://192.168.0.22:8004//web/dept/addDept', JSON.stringify(postData))
+        this.$http.post(this.$store.state.local + '/web/dept/addDept', JSON.stringify(postData))
           .then((res) => {
             console.log(res)
             this.$message({
@@ -406,7 +406,7 @@
               entryDate: this.ruleForm.entryDate
             }
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-            this.$http.post('http://192.168.0.22:8004/web/user/addUser', JSON.stringify(postData))
+            this.$http.post(this.$store.state.local + '/web/user/addUser', JSON.stringify(postData))
               .then((res) => {
                 console.log(res)
                 this.$message({
@@ -438,7 +438,7 @@
             }
             console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-            this.$http.post('http://192.168.0.22:8004/web/user/addUser', JSON.stringify(postData))
+            this.$http.post(this.$store.state.local + '/web/user/addUser', JSON.stringify(postData))
               .then((res) => {
                 console.log(res)
                 this.$message({

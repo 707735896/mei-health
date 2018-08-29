@@ -275,7 +275,7 @@
             }
             console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-            this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+            this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
               .then((res) => {
                 console.log(res)
                 this.$message({
@@ -311,7 +311,7 @@
               }
               console.log(postData)
               this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-              this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+              this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
                 .then((res) => {
                   console.log(res)
                   this.$message({
@@ -333,7 +333,7 @@
                 remark: this.leaveForm.desc
               }
               this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-              this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+              this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
                 .then((res) => {
                   console.log(res)
                   this.$message({
@@ -368,7 +368,7 @@
             }
             console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-            this.$http.post('http://192.168.0.22:8004/applyProcess/addApplyProcess', JSON.stringify(postData))
+            this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
               .then((res) => {
                 console.log(res)
                 this.$message({

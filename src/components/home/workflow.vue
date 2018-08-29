@@ -16,21 +16,24 @@
           <quill-editor ref="myTextEditor" v-model="content" :options="editorOption"
                         class="workflow-editor"></quill-editor>
         </div>
-        <div>
+        <div style="height: 40px;width: 100%">
           <label class="workflow-label">添加附件：</label>
           <el-upload
             class="upload-demo"
-            action="https://jsonplaceholder.typicode.com/posts/"
+            action="http://192.168.0.22:8004/file/upLoadFile"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
             multiple
             :limit="3"
             :on-exceed="handleExceed"
-            :file-list="fileList">
+            >
             <el-button size="small" type="primary">点击上传</el-button>
-            <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
           </el-upload>
+        </div>
+        <div class="fj-submit-btn">
+          <el-button type="primary" class="close">提交</el-button>
+          <el-button class="close" plain>取 消</el-button>
         </div>
       </div>
     </div>
@@ -67,13 +70,6 @@
         enclosure: '',
         editorOption: {
         },
-        fileList: [{
-          name: 'food.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }]
       }
     },
     computed: {
@@ -173,6 +169,23 @@
   }
 
   .workflow .upload-demo {
-    float: left;
+    width: 338px;
+  }
+
+  .fj-submit-btn {
+    margin-top: 115px;
+  }
+
+  .workflow .el-upload-list {
+    width: 350px;
+    /*height: 40px;*/
+    line-height: 40px;
+    margin-left: 236px;
+    /*background: #f5f8fa;*/
+  }
+  .workflow .el-upload-list__item-name{
+    /*line-height: 40px;*/
+    /*float: left;*/
+    text-align: left;
   }
 </style>
