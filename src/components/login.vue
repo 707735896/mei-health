@@ -212,11 +212,6 @@
     z-index: 2;
   }
 
-  .icons {
-    background: url(../assets/images/icons.png) no-repeat;
-    display: inline-block;
-  }
-
   .close {
     height: 16px;
     width: 16px;

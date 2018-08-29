@@ -152,7 +152,7 @@
   }
 
   .input-set {
-    width: 800px;
+    width: 800px !important;
     height: 40px;
     margin: 30px 0;
   }

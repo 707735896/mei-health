@@ -24,22 +24,22 @@ new Vue({
   store,
   components: { App },
   template: '<App/>',
-  watch:{
-    "$route" : 'checkLogin'
-  },
-  created() {
-    this.checkLogin();
-  },
-  methods:{
-    checkLogin(){
-
-      //检查是否存在session
-      if(!this.getCookie('session')){
-        this.$router.push('/login');
-      }
-      // else{
-      //   this.$router.push('/home');
-      // }
-    }
-  }
+  // watch:{
+  //   "$route" : 'checkLogin'
+  // },
+  // created() {
+  //   this.checkLogin();
+  // },
+  // methods:{
+  //   checkLogin(){
+  //
+  //     //检查是否存在session
+  //     // if(!this.getCookie('session')){
+  //     //   this.$router.push('/login');
+  //     // }
+  //     // else{
+  //     //   this.$router.push('/home');
+  //     // }
+  //   }
+  // }
 })

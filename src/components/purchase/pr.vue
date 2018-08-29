@@ -256,4 +256,8 @@
     border-radius: 5px;
     border: 1px solid #409EFF;
   }
+
+  .v-table-title-class {
+    background: #f5f8fa !important;
+  }
 </style>

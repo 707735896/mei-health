@@ -38,7 +38,7 @@
           </h6>
           <div class="right-select">
             <a @click="outerDeptVisible = true">添加子部门</a>
-            <a class="addPeople" @click="outerUserVisible = true">添加人员</a>
+            <a class="addPeople" @click="openAddUser">添加人员</a>
             <a>调整部门</a>
             <a>修改</a>
             <a>删除</a>
@@ -103,9 +103,9 @@
                 <el-form-item label="上级部门" prop="pDept">
                   <el-input v-model="deptForm.pDept"></el-input>
                 </el-form-item>
-                <el-form-item label="部门负责人" prop="deptManager">
-                  <el-input v-model="deptForm.deptManager" @click.native="innerDeptVisible = true"></el-input>
-                </el-form-item>
+                <!--<el-form-item label="部门负责人" prop="deptManager">-->
+                  <!--<el-input v-model="deptForm.deptManager" @click.native="innerDeptVisible = true"></el-input>-->
+                <!--</el-form-item>-->
                 <el-form-item>
                   <el-button type="primary" @click="submitDeptForm('deptForm')">保存</el-button>
                   <el-button @click="outerDeptVisible = false">取消</el-button>
@@ -143,9 +143,13 @@
                   <el-input v-model="ruleForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="部门" prop="dept">
-                  <el-select v-model="ruleForm.dept" placeholder="请选择部门" style="width: 360px">
-                    <el-option label="区域一" value="shanghai"></el-option>
-                    <el-option label="区域二" value="beijing"></el-option>
+                  <el-select v-model="ruleForm.deptId" placeholder="请选择部门" style="width: 360px">
+                    <el-option
+                      v-for="item in options"
+                      :key="item.id"
+                      :label="item.deptName"
+                      :value="item.id">
+                    </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="职位" prop="position" placeholder="请输入职位">
@@ -225,6 +229,7 @@
         }
       };
       return {
+        options:[],
         data2: generateData2(),
         value2: [],
         filterMethod(query, item) {
@@ -349,6 +354,23 @@
             console.log(error)
           })
       },
+      openAddUser(){
+        this.outerUserVisible = true;
+        let postData = {
+          pageSize: 0,
+          pageNumber: 0
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post('http://192.168.0.22:8004/web/dept/deptList', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            var datas = res.data.obj;
+            this.options = datas;
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
       submitDeptForm(formName) {
         let postData = {
           deptName: this.deptForm.deptName,
@@ -407,13 +429,14 @@
           if (valid) {
             let postData = {
               userName: this.ruleForm.name,
-              deptId: 2,
+              deptId: this.ruleForm.deptId,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
               birthday: this.ruleForm.birthday,
               entryDate: this.ruleForm.entryDate
             }
+            console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
             this.$http.post('http://192.168.0.22:8004/web/user/addUser', JSON.stringify(postData))
               .then((res) => {

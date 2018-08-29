@@ -300,4 +300,7 @@
     margin-bottom: 15px;
   }
 
+  .v-table-title-class {
+    background: #f5f8fa !important;
+  }
 </style>

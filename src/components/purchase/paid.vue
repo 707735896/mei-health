@@ -271,4 +271,8 @@
     font-size: 22px;
     color: #ee456d;
   }
+
+  .v-table-title-class {
+    background: #f5f8fa !important;
+  }
 </style>
