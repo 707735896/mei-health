@@ -7,8 +7,8 @@ Vue.use(Vuex);
 //Vuex配置
 const store = new Vuex.Store({
   state: {
+    //  http://47.100.109.74:9528
     local:'http://192.168.0.22:8004',
-    domain: 'http://47.100.109.74:9528', //保存后台请求的地址，修改时方便（比方说从测试服改成正式服域名）
     userInfo: { //保存用户信息
       id: null,
       userName: null,

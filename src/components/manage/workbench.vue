@@ -496,4 +496,11 @@
   .workbench .el-form-item__error {
     left: 25px;
   }
+
+  .workbench .el-dialog{
+    float: right;
+    height: 100%;
+    margin-top: 0vh !important;
+    margin: 0 auto 0px;
+  }
 </style>

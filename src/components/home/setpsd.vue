@@ -88,7 +88,7 @@
             }
             console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-            this.$http.post('http://192.168.0.22:8004/console/updatePassword', JSON.stringify(postData))
+            this.$http.post(this.$store.state.local + '/console/updatePassword', JSON.stringify(postData))
               .then((res) => {
                 this.$message({
                   message: '修改成功',

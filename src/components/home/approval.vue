@@ -301,7 +301,7 @@
         type: 0
       }
       this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post('http://192.168.0.22:8004/applyProcess/selectApplyProcess', JSON.stringify(postData))
+      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData))
         .then((res) => {
           console.log(res)
           this.tableData = res.data.obj.rows;
@@ -314,7 +314,7 @@
         type: 1
       }
       this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post('http://192.168.0.22:8004/applyProcess/selectApplyProcess', JSON.stringify(postData2))
+      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData2))
         .then((res) => {
           console.log(res.data.obj.rows)
           this.tableData2 = res.data.obj.rows;
@@ -327,7 +327,7 @@
         type: 2
       }
       this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post('http://192.168.0.22:8004/applyProcess/selectApplyProcess', JSON.stringify(postData3))
+      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData3))
         .then((res) => {
           console.log(res.data.obj.rows)
           this.tableData3 = res.data.obj.rows;
@@ -342,7 +342,7 @@
             id: row.id
           }
           this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-          this.$http.post('http://192.168.0.22:8004/applyProcess/viewApplyProcess', JSON.stringify(postData))
+          this.$http.post(this.$store.state.local + '/applyProcess/viewApplyProcess', JSON.stringify(postData))
             .then((res) => {
               console.log(res.data.obj)
               this.applyPersonName = res.data.obj.applyPerson;
