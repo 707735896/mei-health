@@ -332,6 +332,7 @@
       return {
         selectListId: [],
         selectFzr: [],
+        selectId:[],
         newLists: [],
         setDeptName: '',
         delId: '',
@@ -560,14 +561,15 @@
             var newJson = datas.map((us) => {
               return us.userName
             });
-            var userId = datas.map((us) => {
+
+            var newId = datas.map((us) => {
               return us.id
             });
-            this.selectListId = userId;
-            var data = [];
-            var cities = newJson;
-            var pinyin = newJson;
-            cities.forEach(function (city, index) {
+            this.selectListId = newId;
+            const data = [];
+            const cities = newJson;
+            const pinyin = newJson;
+            cities.forEach((city, index) => {
               data.push({
                 label: city,
                 key: index,
@@ -776,7 +778,7 @@
         let postData = {
           id: this.delId,
           deptName: this.setDeptName,
-          principal: this.selectFzr
+          principal: this.selectId
         }
         console.log(postData)
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
@@ -817,6 +819,11 @@
           var ss = this.value2[i];
           this.selectFzr.push(this.data2[ss].label)
         }
+        for (var i = 0; i < this.value2.length; i++) {
+          var ss = this.value2[i];
+          this.selectId.push(this.selectListId[ss])
+        }
+        console.log(this.selectId)
       }
     }
   }
