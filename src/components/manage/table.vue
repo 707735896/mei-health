@@ -84,11 +84,11 @@
                     :filter-method="filterMethod"
                     filter-placeholder="请输入拼音"
                     v-model="value2"
-                    :data="data2">
+                    :data="data2" @right-check-change="getCheckLabel">
                   </el-transfer>
                 </div>
                 <div slot="footer" class="dialog-footer" style="text-align: center">
-                  <el-button type="primary">确 定</el-button>
+                  <el-button type="primary" @click="innerSetDept = false">确 定</el-button>
                   <el-button @click="innerSetDept = false">取 消</el-button>
                 </div>
               </el-dialog>
@@ -97,10 +97,10 @@
               <div class="dept-title">设置部门</div>
               <el-form :model="deptForm" status-icon :rules="dept" ref="deptForm" label-width="100px"
                        class="demo-ruleForm">
-                <el-form-item label="部门名称" prop="deptName">
+                <el-form-item label="部门名称：" prop="deptName">
                   <el-input v-model="setDeptName"></el-input>
                 </el-form-item>
-                <el-form-item label="上级部门" prop="dept">
+                <el-form-item label="上级部门：" prop="dept">
                   <el-select v-model="deptForm.deptId" placeholder="请选择部门" style="width: 300px">
                     <el-option
                       v-for="item in options"
@@ -110,11 +110,15 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="部门负责人" prop="deptManager">
-                  <el-input @click.native="openInnerSetDept"></el-input>
+                <el-form-item label="部门负责人：" prop="deptManager">
+                  <div @click="openInnerSetDept"
+                       class="open-select">
+                    <span v-for="item in selectFzr"
+                          class="open-span">{{item}}</span>
+                  </div>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" @click="submitDeptForm('deptForm')">保存</el-button>
+                  <el-button type="primary" @click="updateDept('deptForm')">保存</el-button>
                   <el-button @click="outerSetDept = false">取消</el-button>
                 </el-form-item>
               </el-form>
@@ -151,7 +155,7 @@
                   <el-input v-model="deptForm.deptName"></el-input>
                 </el-form-item>
                 <el-form-item label="上级部门" prop="dept">
-                  <el-select v-model="deptForm.pDept" placeholder="请选择部门" style="width: 300px">
+                  <el-select v-model="deptForm.deptId" placeholder="请选择部门" style="width: 300px">
                     <el-option
                       v-for="item in options"
                       :key="item.id"
@@ -180,6 +184,10 @@
               <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="姓名" prop="name" placeholder="请输入姓名">
                   <el-input v-model="ruleForm.name"></el-input>
+                </el-form-item>
+                <el-form-item label="性别" prop="sex" placeholder="请输入性别">
+                  <!--<el-radio v-model="sex" label="0">男</el-radio>-->
+                  <!--<el-radio v-model="sex" label="1">女</el-radio>-->
                 </el-form-item>
                 <el-form-item label="部门" prop="dept">
                   <el-select v-model="ruleForm.deptId" placeholder="请选择部门" style="width: 360px">
@@ -295,32 +303,16 @@
     data() {
       const generateData2 = _ => {
         const data = [];
-        let postData = {
-          pageSize: this.pageSize,
-          pageNumber: this.pageNumber,
-          deptId: this.delId
-        }
-        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
-          .then((res) => {
-            var datas = res.data.obj.rows;
-            var newJson = datas.map((us) => {
-              return us.userName
-            });
-            this.newLists = newJson
-            const cities = this.newLists;
-            console.log(cities)
-            const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing'];
-            cities.forEach((city, index) => {
-              data.push({
-                label: city,
-                key: index,
-                pinyin: pinyin[index]
-              });
-            });
-            return data;
-          })
-
+        const cities = ['上海', '北京', '广州', '深圳', '南京', '西安', '成都'];
+        const pinyin = ['shanghai', 'beijing', 'guangzhou', 'shenzhen', 'nanjing', 'xian', 'chengdu'];
+        cities.forEach((city, index) => {
+          data.push({
+            label: city,
+            key: index,
+            pinyin: pinyin[index]
+          });
+        });
+        return data;
       };
       var checkDeptName = (rule, value, callback) => {
         if (value === '') {
@@ -338,7 +330,9 @@
         }
       };
       return {
-        newLists:[],
+        selectListId: [],
+        selectFzr: [],
+        newLists: [],
         setDeptName: '',
         delId: '',
         options: [],
@@ -385,6 +379,7 @@
         },
         ruleForm: {
           name: '',
+          sex: '0',
           deptId: '',
           position: '',
           phone: '',
@@ -506,8 +501,8 @@
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
         this.$http.post(this.$store.state.local + '/web/dept/deptList', JSON.stringify(postData))
           .then((res) => {
-            console.log(res)
             var datas = res.data.obj;
+            console.log(datas)
             var newList = toTree(datas, 'id', 'pid', 'children')
             this.treeData = newList;
           })
@@ -534,6 +529,7 @@
       },
       openSetDept() {
         this.outerSetDept = true;
+        console.log(this.data2)
         let postData = {
           pageSize: 0,
           pageNumber: 0
@@ -551,24 +547,38 @@
       },
       openInnerSetDept() {
         this.innerSetDept = true;
-        // let postData = {
-        //   pageSize: this.pageSize,
-        //   pageNumber: this.pageNumber,
-        //   deptId: this.delId
-        // }
-        // this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        // this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
-        //   .then((res) => {
-        //     var datas = res.data.obj.rows;
-        //     console.log(datas)
-        //     var newJson = datas.map((us) => {
-        //       return us.userName
-        //     });
-        //
-        //   })
-        //   .catch((error) => {
-        //     console.log(error)
-        //   })
+        let postData = {
+          pageSize: this.pageSize,
+          pageNumber: this.pageNumber,
+          deptId: this.delId
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
+          .then((res) => {
+            var datas = res.data.obj.rows;
+            console.log(datas)
+            var newJson = datas.map((us) => {
+              return us.userName
+            });
+            var userId = datas.map((us) => {
+              return us.id
+            });
+            this.selectListId = userId;
+            var data = [];
+            var cities = newJson;
+            var pinyin = newJson;
+            cities.forEach(function (city, index) {
+              data.push({
+                label: city,
+                key: index,
+                pinyin: pinyin[index]
+              });
+            });
+            this.data2 = data;
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       },
       openAddUser() {
         this.outerUserVisible = true;
@@ -615,12 +625,14 @@
           if (valid) {
             let postData = {
               userName: this.ruleForm.name,
+              sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
               birthday: this.ruleForm.birthday,
-              entryDate: this.ruleForm.entryDate
+              entryDate: this.ruleForm.entryDate,
+              statusId: 1
             }
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
             this.$http.post(this.$store.state.local + '/web/user/addUser', JSON.stringify(postData))
@@ -646,12 +658,14 @@
           if (valid) {
             let postData = {
               userName: this.ruleForm.name,
+              sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
               birthday: this.ruleForm.birthday,
-              entryDate: this.ruleForm.entryDate
+              entryDate: this.ruleForm.entryDate,
+              statusId: 1
             }
             console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
@@ -758,6 +772,27 @@
           }
         });
       },
+      updateDept() {
+        let postData = {
+          id: this.delId,
+          deptName: this.setDeptName,
+          principal: this.selectFzr
+        }
+        console.log(postData)
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/web/dept/updateDept', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.$message({
+              message: '保存成功',
+              type: 'success'
+            });
+            this.outerEditUserVisible = false
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      },
       deleteDept() {
         let postData = {
           id: this.delId
@@ -776,6 +811,12 @@
           .catch((error) => {
             console.log(error)
           })
+      },
+      getCheckLabel() {
+        for (var i = 0; i < this.value2.length; i++) {
+          var ss = this.value2[i];
+          this.selectFzr.push(this.data2[ss].label)
+        }
       }
     }
   }
@@ -1049,5 +1090,25 @@
 
   .el-dialog {
 
+  }
+
+  .open-select {
+    width: 290px;
+    border: 1px solid #dcdfe6;
+    border-radius: 5px;
+    height: 40px;
+    display: inline-block;
+    cursor: pointer;
+    text-align: left;
+  }
+
+  .open-span {
+    display: inline-block;
+    width: 80px;
+    background: #dcdfe6;
+    border-radius: 20px;
+    line-height: 35px;
+    height: 35px;
+    text-align: center;
   }
 </style>
