@@ -351,13 +351,13 @@
   }
 
   .el-tree-node__content {
-    height: 40px;
+    height: 40px !important;;
     border-radius: 20px;
     margin: 2px 0;
   }
 
   .el-tree-node:focus > .el-tree-node__content {
-    background: #4389f5;
+    background: #4389f5 !important;
     color: #fff;
     font-size: 15px;
   }

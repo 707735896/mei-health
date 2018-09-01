@@ -11,11 +11,11 @@
           <div class="manage-table">
             <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
               <el-tab-pane label="架构" name="first">
-                <h5 class="group-title">
-                  <img src="../../assets/images/group/logo-min.png">
-                  <span class="group-name">梅氏健康管理有限公司</span>
-                  <span class="group-sum">(287)</span>
-                </h5>
+                <!--<h5 class="group-title">-->
+                  <!--<img src="../../assets/images/group/logo-min.png">-->
+                  <!--<span class="group-name">梅氏健康管理有限公司</span>-->
+                  <!--<span class="group-sum">(287)</span>-->
+                <!--</h5>-->
                 <el-tree
                   :data="treeData"
                   :props="defaultProps"
@@ -186,8 +186,8 @@
                   <el-input v-model="ruleForm.name"></el-input>
                 </el-form-item>
                 <el-form-item label="性别" prop="sex" placeholder="请输入性别">
-                  <!--<el-radio v-model="sex" label="0">男</el-radio>-->
-                  <!--<el-radio v-model="sex" label="1">女</el-radio>-->
+                  <el-radio v-model="ruleForm.sex" label="0">男</el-radio>
+                  <el-radio v-model="ruleForm.sex" label="1">女</el-radio>
                 </el-form-item>
                 <el-form-item label="部门" prop="dept">
                   <el-select v-model="ruleForm.deptId" placeholder="请选择部门" style="width: 360px">
@@ -199,7 +199,7 @@
                     </el-option>
                   </el-select>
                 </el-form-item>
-                <el-form-item label="职位" prop="position" placeholder="请输入职位">
+                <el-form-item label="岗位" prop="position" placeholder="请输入职位">
                   <el-input v-model="ruleForm.position"></el-input>
                 </el-form-item>
                 <el-form-item label="手机" prop="phone" placeholder="请输入手机">
@@ -332,7 +332,7 @@
       return {
         selectListId: [],
         selectFzr: [],
-        selectId:[],
+        selectId: [],
         newLists: [],
         setDeptName: '',
         delId: '',
@@ -645,6 +645,23 @@
                   type: 'success'
                 });
                 this.outerUserVisible = false
+                let postData = {
+                  pageSize: this.pageSize,
+                  pageNumber: this.pageNumber,
+                  deptId: this.ruleForm.deptId,
+                }
+                this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+                this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
+                  .then((res) => {
+                    var datas = res.data.obj.rows;
+                    console.log(res)
+                    console.log(datas.length)
+                    this.tableData = datas;
+                    this.total = datas.length;
+                  })
+                  .catch((error) => {
+                    console.log(error)
+                  })
               })
               .catch((error) => {
                 console.log(error)
@@ -679,6 +696,23 @@
                   type: 'success'
                 });
                 this.$refs[formName].resetFields();
+                let postData = {
+                  pageSize: this.pageSize,
+                  pageNumber: this.pageNumber,
+                  deptId: this.ruleForm.deptId,
+                }
+                this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+                this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
+                  .then((res) => {
+                    var datas = res.data.obj.rows;
+                    console.log(res)
+                    console.log(datas.length)
+                    this.tableData = datas;
+                    this.total = datas.length;
+                  })
+                  .catch((error) => {
+                    console.log(error)
+                  })
               })
               .catch((error) => {
                 console.log(error)
@@ -804,11 +838,23 @@
         this.$http.post(this.$store.state.local + '/web/dept/deleteDept', JSON.stringify(postData))
           .then((res) => {
             console.log(res)
-            this.$message({
-              message: '保存成功',
-              type: 'success'
+            this.$confirm('是否继续删除?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+              this.outerEditUserVisible = false;
+              this.getdeptList();
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              });
             });
-            this.outerEditUserVisible = false
           })
           .catch((error) => {
             console.log(error)
@@ -1018,13 +1064,13 @@
   }
 
   .el-tree-node__content {
-    height: 40px;
+    height: 40px !important;
     border-radius: 20px;
     margin: 2px 0;
   }
 
   .el-tree-node:focus > .el-tree-node__content {
-    background: #4389f5;
+    background: #4389f5 !important;
     color: #fff;
     font-size: 15px;
   }
@@ -1117,5 +1163,9 @@
     line-height: 35px;
     height: 35px;
     text-align: center;
+  }
+
+  .editUser .el-input--prefix .el-input__inner {
+    width: 360px;
   }
 </style>
