@@ -73,7 +73,7 @@
           {
             "costExplain": "",
             "price": 0,
-            "payType": "",
+            "payType": "银行转账",
             "remark": ""
           },
         ],
@@ -105,7 +105,7 @@
             width: 50,
             titleAlign: 'center',
             columnAlign: 'center',
-            isEdit: true,
+            isEdit: false,
             isResize: true
           },
           {
@@ -130,7 +130,7 @@
         var data = {
           "costExplain": "",
           "price": 0,
-          "payType": "",
+          "payType": "银行转账",
           "remark": ""
         }
         this.tableData.push(data)

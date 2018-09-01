@@ -8,7 +8,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     //  http://192.168.0.16:9528
-    local:'http://192.168.0.16:9528',
+    local:'http://192.168.0.22:8004',
     userInfo: { //保存用户信息
       id: null,
       userName: null,

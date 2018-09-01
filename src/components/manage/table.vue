@@ -12,16 +12,18 @@
             <el-tabs v-model="activeName2" type="card" @tab-click="handleClick">
               <el-tab-pane label="架构" name="first">
                 <!--<h5 class="group-title">-->
-                  <!--<img src="../../assets/images/group/logo-min.png">-->
-                  <!--<span class="group-name">梅氏健康管理有限公司</span>-->
-                  <!--<span class="group-sum">(287)</span>-->
+                <!--<img src="../../assets/images/group/logo-min.png">-->
+                <!--<span class="group-name">梅氏健康管理有限公司</span>-->
+                <!--<span class="group-sum">(287)</span>-->
                 <!--</h5>-->
-                <el-tree
-                  :data="treeData"
-                  :props="defaultProps"
-                  accordion
-                  @node-click="handleNodeClick">
-                </el-tree>
+                <div style="height: 480px">
+                  <el-tree
+                    :data="treeData"
+                    :props="defaultProps"
+                    accordion
+                    @node-click="handleNodeClick">
+                  </el-tree>
+                </div>
               </el-tab-pane>
               <el-tab-pane label="职权" name="second">职权</el-tab-pane>
             </el-tabs>
@@ -46,7 +48,7 @@
           </div>
           <el-table ref="multipleTable" :data="tableData.slice((currentPage-1)*pageSize,currentPage*pageSize)"
                     tooltip-effect="dark" style="width: 100%;height: 432px"
-                    @selection-change="handleSelectionChange">
+                    @selection-change="handleSelectionChange" :header-cell-style="{background:'#f5f8fa'}">
             <el-table-column type="selection" width="55">
             </el-table-column>
             <el-table-column prop="userName" label="姓名" width="120">
@@ -60,6 +62,8 @@
             <el-table-column prop="phone" label="手机" show-overflow-tooltip>
             </el-table-column>
             <el-table-column prop="email" label="邮箱" show-overflow-tooltip>
+            </el-table-column>
+            <el-table-column prop="statusId" label="状态" show-overflow-tooltip>
             </el-table-column>
           </el-table>
           <el-pagination
@@ -84,7 +88,7 @@
                     :filter-method="filterMethod"
                     filter-placeholder="请输入拼音"
                     v-model="value2"
-                    :data="data2" @right-check-change="getCheckLabel">
+                    :data="data2" @change="getCheckLabel">
                   </el-transfer>
                 </div>
                 <div slot="footer" class="dialog-footer" style="text-align: center">
@@ -198,6 +202,9 @@
                       :value="item.id">
                     </el-option>
                   </el-select>
+                </el-form-item>
+                <el-form-item label="级别" prop="level" placeholder="请输入级别">
+                  <el-input v-model="ruleForm.level"></el-input>
                 </el-form-item>
                 <el-form-item label="岗位" prop="position" placeholder="请输入职位">
                   <el-input v-model="ruleForm.position"></el-input>
@@ -382,6 +389,7 @@
           name: '',
           sex: '0',
           deptId: '',
+          level:'',
           position: '',
           phone: '',
           email: '',
@@ -405,6 +413,9 @@
           ],
           deptId: [
             {required: true, message: '请选择部门', trigger: 'change'}
+          ],
+          level: [
+            {required: true, message: '请输入级别', trigger: 'blur'},
           ],
           position: [
             {required: true, message: '请输入职位', trigger: 'blur'},
@@ -629,6 +640,7 @@
               userName: this.ruleForm.name,
               sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
+              level:this.ruleForm.level,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
@@ -679,6 +691,7 @@
               userName: this.ruleForm.name,
               sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
+              level:this.ruleForm.level,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
@@ -823,7 +836,7 @@
               message: '保存成功',
               type: 'success'
             });
-            this.outerEditUserVisible = false
+            this.outerSetDept = false
           })
           .catch((error) => {
             console.log(error)
@@ -1027,6 +1040,11 @@
 <style>
   .manage-table .el-tabs__header, .manage-table .el-tabs__content {
     margin: 15px 0;
+
+  }
+
+  .manage-table .el-tabs__content {
+    overflow: scroll;
   }
 
   .manage-table .el-tabs--card > .el-tabs__header .el-tabs__item {
@@ -1167,5 +1185,9 @@
 
   .editUser .el-input--prefix .el-input__inner {
     width: 360px;
+  }
+
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #37414a;
   }
 </style>
