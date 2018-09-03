@@ -1,386 +1,232 @@
 //登录
-
 <template>
-  <div class="login"
-       id="login">
-    <a href="javascript:;"
-       class="log-close">
-      <i class="icons close"></i>
-    </a>
-    <div class="log-bg">
-      <div class="log-cloud cloud1"></div>
-      <div class="log-cloud cloud2"></div>
-      <div class="log-cloud cloud3"></div>
-      <div class="log-cloud cloud4"></div>
+  <div>
+    <div class="header">
+      <div class="header-cont">
+        <span class="logo"><img src="../assets/images/top_logo.png"></span>
+      </div>
+    </div>
+    <div class="login-content">
+      <p class="login-title">
+        世界会为有目标的人让路
+      </p>
+      <p class="login-ms">
+        任何的限制都是从自己的内心开始的
+      </p>
+      <el-form :model="ruleForm" :rules="rules" ref="ruleForm">
+        <el-form-item prop="userNo">
+          <img src="../assets/images/login_username.png" class="user-img"/>
+          <el-input type="text" placeholder="请输入账号" v-model="ruleForm.userNo" class="imgblock"/>
+        </el-form-item>
+        <el-form-item prop="password" style="margin-bottom: 25px">
+          <img src="../assets/images/login_password.png" class="user-img"/>
+          <el-input type="password" placeholder="请输入密码" v-model="ruleForm.password"/>
+        </el-form-item>
+        <el-button type="primary" class="login-form" @click="login('ruleForm')"
+                   v-loading.fullscreen.lock="fullscreenLoading">登 录
+        </el-button>
+      </el-form>
+      <div class="ewm">
+        <div class="android">
+          <img src="../assets/images/androidimg.png" style="margin-right: 70px"/>
+          <img src="../assets/images/androidicon.png"/><span>Android下载</span>
+        </div>
+        <div class="ios">
+          <img src="../assets/images/iosimg.png"/>
+          <img src="../assets/images/iosicon.png"/><span>Iphone下载</span>
+        </div>
 
-      <div class="log-logo">Mei health</div>
-      <div class="log-text">@luocheng</div>
+      </div>
     </div>
-    <div class="log-email">
-      <input type="text"
-             placeholder="员工编号"
-             :class="'log-input' + (userNo==''?' log-input-empty':'')"
-             v-model="userNo">
-      <input type="password"
-             placeholder="密码"
-             :class="'log-input' + (password==''?' log-input-empty':'')"
-             v-model="password">
-      <a href="javascript:;"
-         class="log-btn"
-         @click="login"
-         v-loading.fullscreen.lock="fullscreenLoading">登 录</a>
-    </div>
+    <Footer></Footer>
   </div>
 </template>
 
 <script>
+  import Footer from "@/components/common/Footer";
+
   export default {
     name: "Login",
+    components: {
+      Footer
+    },
     data() {
       return {
         isLoging: false,
-        userNo: "",
-        password: "",
-        fullscreenLoading: false
+        fullscreenLoading: false,
+        ruleForm: {
+          userNo: "",
+          password: "",
+        },
+        rules: {
+          userNo: [
+            {required: true, message: '账号不能为空', trigger: 'blur'}
+          ],
+          password: [
+            {required: true, message: '密码不能为空', trigger: 'blur'}
+          ]
+        }
       };
     },
     methods: {
       //登录逻辑
-      login() {
-        if (this.userNo != "" && this.password != "") {
-          this.toLogin();
-        }
+      login(formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            //一般要跟后端了解密码的加密规则
+            //这里例子用的哈希算法来自./js/sha1.min.js
+            // let password_sha = this.password;
+
+            //需要想后端发送的登录参数
+            let postData = {
+              userNo: this.ruleForm.userNo,
+              password: this.ruleForm.password
+            };
+            //设置在登录状态
+            this.isLoging = true;
+
+            //请求后端:
+            this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+            this.$http.post(this.$store.state.local + '/console/login', JSON.stringify(postData))
+              .then((response) => {
+                console.log(response)
+                if (response.data.code == 0) {
+                  let expireDays = 1000 * 60 * 60 * 24 * 15;
+                  this.setCookie('session', response.data.session, expireDays);
+                  let userInfo = {
+                    id: response.data.obj.id,
+                    userName: response.data.obj.userName,
+                    password: response.data.obj.password,
+                    headUrl:response.data.obj.headUrl
+                  }
+                  this.$store.commit("updateUserInfo", userInfo);
+                  //登录成功后
+                  this.isLoging = false;
+                  this.fullscreenLoading = true;
+                  //登录成功后
+                  setTimeout(() => {
+                    this.fullscreenLoading = false;
+                    this.$router.push("/home");
+                  }, 500);
+                }
+              })
+              .catch((error) => {
+                console.log(error)
+                this.$message({
+                  message: '账号或密码错误',
+                  type: 'error'
+                });
+              })
+          }
+        });
       },
-
-      //登录请求
-      toLogin() {
-        //一般要跟后端了解密码的加密规则
-        //这里例子用的哈希算法来自./js/sha1.min.js
-        // let password_sha = this.password;
-
-        //需要想后端发送的登录参数
-        let postData = {
-          userNo: this.userNo,
-          password: this.password
-        };
-        //设置在登录状态
-        this.isLoging = true;
-
-        //请求后端:
-        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post(this.$store.state.local + '/console/login', JSON.stringify(postData))
-          .then((response) => {
-            console.log(response)
-            if (response.data.code == 0) {
-              let expireDays = 1000 * 60 * 60 * 24 * 15;
-              this.setCookie('session', response.data.session, expireDays);
-              let userInfo = {
-                id: response.data.obj.id,
-                userName: response.data.obj.userName,
-                password: response.data.obj.password
-              }
-              this.$store.commit("updateUserInfo", userInfo);
-              //登录成功后
-              this.isLoging = false;
-              this.fullscreenLoading = true;
-              //登录成功后
-              setTimeout(() => {
-                this.fullscreenLoading = false;
-                this.$router.push("/home");
-              }, 500);
-            }
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-
-        //演示用
-
-        //登录状态15天后过期
-        // let expireDays = 1000 * 60 * 60 * 24 * 15;
-        // this.setCookie("session", "blablablablabla...", expireDays);
-        // this.isLoging = false;
-        // this.fullscreenLoading = true;
-        // //登录成功后
-        // setTimeout(() => {
-        //   this.fullscreenLoading = false;
-        //   this.$router.push("/home");
-        // }, 500);
-      }
     }
   };
 </script>
 
 <style scoped>
-  .login {
-    position: fixed;
-    overflow: hidden;
-    left: 50%;
-    margin-left: -250px;
-    top: 50%;
-    margin-top: -350px;
-    width: 500px;
-    min-height: 555px;
-    z-index: 10;
-    right: 140px;
-    background: #fff;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
-    -webkit-box-shadow: 0px 3px 16px -5px #070707;
-    box-shadow: 0px 3px 16px -5px #070707;
-  }
-
-  .log-close {
-    display: block;
-    position: absolute;
-    top: 12px;
-    right: 12px;
-    opacity: 1;
-  }
-
-  .log-close:hover .icons {
-    transform: rotate(180deg);
-  }
-
-  .log-close .icons {
-    opacity: 1;
-    transition: all 0.3s;
-  }
-
-  .log-cloud {
-    background-image: url(../assets/images/login-cloud.png);
-    width: 63px;
-    height: 40px;
-    position: absolute;
-    z-index: 1;
-  }
-
-  .login .cloud1 {
-    top: 21px;
-    left: -30px;
-    transform: scale(0.6);
-    animation: cloud1 20s linear infinite;
-  }
-
-  .login .cloud2 {
-    top: 87px;
-    right: 20px;
-    animation: cloud2 19s linear infinite;
-  }
-
-  .login .cloud3 {
-    top: 160px;
-    left: 5px;
-    transform: scale(0.8);
-    animation: cloud3 21s linear infinite;
-  }
-
-  .login .cloud4 {
-    top: 150px;
-    left: -40px;
-    transform: scale(0.4);
-    animation: cloud4 19s linear infinite;
-  }
-
-  .log-bg {
-    background: url(../assets/images/login-bg.jpg);
+  .login-content {
+    background: url(../assets/images/loginbg.jpg);
+    min-width: 1200px;
     width: 100%;
-    height: 312px;
+    height: 800px;
     overflow: hidden;
   }
 
-  .log-logo {
-    height: 80px;
-    margin: 120px auto 25px;
-    text-align: center;
-    color: #1fcab3;
-    font-weight: bold;
-    font-size: 40px;
+  .header {
+    min-width: 1200px;
+    width: 100%;
+    height: 70px;
+    background: #fff;
   }
 
-  .log-text {
-    color: #57d4c3;
-    font-size: 13px;
-    text-align: center;
+  .header-cont {
+    width: 1200px;
     margin: 0 auto;
   }
 
-  .log-logo,
-  .log-text {
-    z-index: 2;
+  .header-cont > .logo {
+    float: left;
+    width: 250px;
+    margin: 15px 0;
   }
 
-  .close {
-    height: 16px;
-    width: 16px;
-    background-position: -13px 0;
+  .header-cont > .logo img {
+    width: auto;
   }
 
-  .login-email {
-    height: 17px;
-    width: 29px;
-    background-position: -117px 0;
+  .login-title {
+    font-size: 56px;
+    text-align: center;
+    margin-top: 160px;
+    margin-bottom: 13px;
+    color: #fff;
   }
 
-  .log-btns {
-    padding: 15px 0;
-    margin: 0 auto;
+  .login-ms {
+    font-size: 22px;
+    text-align: center;
+    color: #fff;
+    margin-bottom: 40px;
   }
 
-  .log-btn {
-    width: 402px;
+  .login-form {
     display: block;
-    text-align: left;
-    line-height: 50px;
-    margin: 0 auto 15px;
-    height: 50px;
-    color: #fff;
-    font-size: 13px;
-    -webkit-border-radius: 5px;
-    background-color: #3b5999;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
+    margin: 0 auto;
+    width: 360px;
+    font-size: 20px;
+    margin-bottom: 45px;
+  }
+
+  .ewm {
+    margin: 0 auto;
+    width: 325px;
+  }
+
+  .android {
+    display: inline-block;
+    width: 120px;
+    height: 200px;
+    margin-right: 70px;
+    color: rgba(255, 255, 255, 0.5)
+  }
+
+  .ios {
+    display: inline-block;
+    width: 120px;
+    height: 200px;
+    color: rgba(255, 255, 255, 0.5)
+  }
+
+  .user-img {
+    top: 30px;
+    margin: 0 auto;
+    display: block;
     position: relative;
+    right: 140px;
   }
 
-  .log-btn.tw {
-    background-color: #13b4e9;
+</style>
+
+<style>
+  .login-content .el-input {
+    width: 360px;
+    display: block;
+    margin: 0 auto;
   }
 
-  .log-btn.email {
-    background-color: #50e3ce;
-  }
-
-  .log-btn:hover,
-  .log-btn:focus {
+  .login-content .el-input__inner {
+    padding-left: 60px;
+    border-radius: 20px !important;
+    background-color: transparent;
     color: #fff;
-    opacity: 0.8;
   }
 
-  .log-email {
-    text-align: center;
-    margin-top: 20px;
+  .login-content .el-form-item__error {
+    left: 500px;
   }
 
-  .log-email .log-btn {
-    background-color: #50e3ce;
-    text-align: center;
-  }
-
-  .log-input-empty {
-    border: 1px solid #f37474 !important;
-  }
-
-  .isloading {
-    background: #d6d6d6;
-  }
-
-  .log-btn .icons {
-    margin-left: 30px;
-    vertical-align: middle;
-  }
-
-  .log-btn .text {
-    left: 95px;
-    line-height: 50px;
-    text-align: left;
-    position: absolute;
-  }
-
-  .log-input {
-    width: 370px;
-    overflow: hidden;
-    padding: 0 15px;
-    font-size: 13px;
-    border: 1px solid #ebebeb;
-    margin: 0 auto 15px;
-    height: 48px;
-    line-height: 48px;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
-    -ms-border-radius: 5px;
-    -o-border-radius: 5px;
-    border-radius: 5px;
-  }
-
-  .log-input.warn {
-    border: 1px solid #f88787;
-  }
-
-  @-webkit-keyframes cloud1 {
-    0% {
-      left: 200px;
-    }
-    100% {
-      left: -130px;
-    }
-  }
-
-  @keyframes cloud1 {
-    0% {
-      left: 200px;
-    }
-    100% {
-      left: -130px;
-    }
-  }
-
-  @-webkit-keyframes cloud2 {
-    0% {
-      left: 500px;
-    }
-    100% {
-      left: -90px;
-    }
-  }
-
-  @keyframes cloud2 {
-    0% {
-      left: 500px;
-    }
-    100% {
-      left: -90px;
-    }
-  }
-
-  @-webkit-keyframes cloud3 {
-    0% {
-      left: 620px;
-    }
-    100% {
-      left: -70px;
-    }
-  }
-
-  @keyframes cloud3 {
-    0% {
-      left: 620px;
-    }
-    100% {
-      left: -70px;
-    }
-  }
-
-  @-webkit-keyframes cloud4 {
-    0% {
-      left: 100px;
-    }
-    100% {
-      left: -70px;
-    }
-  }
-
-  @keyframes cloud4 {
-    0% {
-      left: 100px;
-    }
-    100% {
-      left: -70px;
-    }
+  .login-content .el-form-item {
+    margin-bottom: 5px;
   }
 </style>

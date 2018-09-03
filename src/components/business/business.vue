@@ -67,7 +67,7 @@ export default {
   margin-top: 100px;
 }
 .Business .busIndex-list > a > img {
-  width: 55px;
+  width: 50px;
   float: left;
 }
 .Business .busIndex-list > a > span {

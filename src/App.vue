@@ -172,6 +172,10 @@
   }
 
   .el-button--primary, .el-button, .el-button--danger {
-    border-radius: 20px;
+    border-radius: 20px !important;
+  }
+
+  .el-pagination.is-background .el-pager li:not(.disabled).active {
+    background-color: #37414a !important;
   }
 </style>

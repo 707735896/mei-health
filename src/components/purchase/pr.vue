@@ -141,6 +141,7 @@
       },
       submitForm() {
         let postData = {
+          applyPerson:this.$store.state.userInfo.id,
           remark: this.remark,
           processType: 8,
           financeDetail: this.tableData

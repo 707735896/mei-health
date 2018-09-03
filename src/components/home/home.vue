@@ -20,28 +20,32 @@
         <div class="desk desk-work">
           <h5 class="desk-title">我的工作台</h5>
           <div class="desk-list">
+
             <router-link class="desk-list-li" to="/approval">
               <img src="../../assets/images/btn_shenpi.png">
               <span class="desk-txt">审批
-                <span class="desk-txt-pos">2</span>
+                <span class="desk-txt-pos">{{total}}</span>
               </span>
             </router-link>
+
             <router-link class="desk-list-li" to="/workflow">
               <img src="../../assets/images/btn_xinjian.png">
               <span class="desk-txt">新建工作流
-               <span class="desk-txt-pos">2</span>
               </span>
             </router-link>
-            <a class="desk-list-li">
+
+            <router-link class="desk-list-li" to="/manage/workbench">
               <img src="../../assets/images/btn_qingjia.png">
               <span class="desk-txt">请假
-                            </span>
-            </a>
-            <a class="desk-list-li">
+              </span>
+            </router-link>
+
+            <router-link class="desk-list-li" to="/paid">
               <img src="../../assets/images/btn_baoxiao.png">
               <span class="desk-txt">报销
-                            </span>
-            </a>
+              </span>
+            </router-link>
+
           </div>
         </div>
 
@@ -166,8 +170,23 @@
       Header,
       Footer
     },
+    created() {
+      let postData = {
+        pageSize: this.pageSize,
+        pageNumber: this.pageNumber,
+        applyPerson: this.$store.state.userInfo.id,
+        type: 0
+      }
+      this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData))
+        .then((res) => {
+          console.log(res)
+          this.total = res.data.obj.total;
+        })
+    },
     data() {
       return {
+        total: 0,
         imgList: [
           {url: require("../../assets/images/banner01.png")},
           {url: require("../../assets/images/banner01.png")}
@@ -421,6 +440,7 @@
     height: 40px;
     border-radius: 20px;
   }
+
   .notice-title {
     text-align: center;
     color: #000000;
@@ -428,12 +448,13 @@
     font-weight: bold;
     margin-bottom: 40px;
   }
+
   .notice-info {
     text-align: center;
     font-size: 14px;
     color: #9c9c9c;
     width: 700px;
-    margin:0 auto 50px auto;
+    margin: 0 auto 50px auto;
     border-bottom: 1px solid #e6e6e6;
     border-top: 1px solid #e6e6e6;
     padding: 5px 0;

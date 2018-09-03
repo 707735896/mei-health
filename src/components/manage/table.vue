@@ -389,7 +389,7 @@
           name: '',
           sex: '0',
           deptId: '',
-          level:'',
+          level: '',
           position: '',
           phone: '',
           email: '',
@@ -454,52 +454,33 @@
       },
       handleSizeChange(val) {
         this.pageSize = val;
-        this.tableGetuserList()
+        this.getUserList()
         console.log(`每页 ${val} 条`);
       },
       handleCurrentChange(val) {
         this.currentPage = val;
-        this.tableGetuserList()
+        this.getUserList()
         console.log(`当前页: ${val}`);
       },
       handleNodeClick(data) {
         this.delId = data.id;
         this.setDeptName = data.deptName;
-        this.getuserList(data)
+        this.getUserList()
       },
-      tableGetuserList() {
-        let postData = {
-          pageSize: this.pageSize,
-          pageNumber: this.pageNumber
-        }
-        console.log(postData)
-        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-        this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
-          .then((res) => {
-            var datas = res.data.obj.rows;
-            console.log(datas)
-            console.log('数量' + datas.length)
-            this.tableData = datas;
-            this.total = datas.length;
-          })
-          .catch((error) => {
-            console.log(error)
-          })
-      },
-      getuserList(data) {
+      getUserList() {
         let postData = {
           pageSize: this.pageSize,
           pageNumber: this.pageNumber,
-          deptId: data.id
+          deptId: this.delId
         }
+        console.log('部门id=' + postData.deptId)
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
         this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
           .then((res) => {
             var datas = res.data.obj.rows;
             console.log(res)
-            console.log(datas.length)
             this.tableData = datas;
-            this.total = datas.length;
+            this.total = res.data.obj.total;
           })
           .catch((error) => {
             console.log(error)
@@ -541,7 +522,6 @@
       },
       openSetDept() {
         this.outerSetDept = true;
-        console.log(this.data2)
         let postData = {
           pageSize: 0,
           pageNumber: 0
@@ -568,7 +548,6 @@
         this.$http.post(this.$store.state.local + '/web/user/selectUser', JSON.stringify(postData))
           .then((res) => {
             var datas = res.data.obj.rows;
-            console.log(datas)
             var newJson = datas.map((us) => {
               return us.userName
             });
@@ -615,7 +594,6 @@
           deptName: this.deptForm.deptName,
           pid: this.deptForm.deptId,
         }
-        console.log(postData)
         this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
         this.$http.post(this.$store.state.local + '/web/dept/addDept', JSON.stringify(postData))
           .then((res) => {
@@ -640,7 +618,7 @@
               userName: this.ruleForm.name,
               sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
-              level:this.ruleForm.level,
+              level: this.ruleForm.level,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
@@ -669,7 +647,7 @@
                     console.log(res)
                     console.log(datas.length)
                     this.tableData = datas;
-                    this.total = datas.length;
+                    this.total = res.data.obj.total;
                   })
                   .catch((error) => {
                     console.log(error)
@@ -691,7 +669,7 @@
               userName: this.ruleForm.name,
               sex: this.ruleForm.sex,
               deptId: this.ruleForm.deptId,
-              level:this.ruleForm.level,
+              level: this.ruleForm.level,
               jobName: this.ruleForm.position,
               phone: this.ruleForm.phone,
               email: this.ruleForm.email,
@@ -699,7 +677,6 @@
               entryDate: this.ruleForm.entryDate,
               statusId: 1
             }
-            console.log(postData)
             this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
             this.$http.post(this.$store.state.local + '/web/user/addUser', JSON.stringify(postData))
               .then((res) => {
@@ -721,7 +698,7 @@
                     console.log(res)
                     console.log(datas.length)
                     this.tableData = datas;
-                    this.total = datas.length;
+                    this.total = res.data.obj.total;
                   })
                   .catch((error) => {
                     console.log(error)
@@ -777,7 +754,7 @@
           .then((res) => {
             console.log(res)
             this.$message({
-              message: '保存成功',
+              message: '删除成功',
               type: 'success'
             });
             this.outerEditUserVisible = false

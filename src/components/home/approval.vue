@@ -80,9 +80,9 @@
       <div class="inner-block-2">
         <div class="steps-block">
           <el-steps direction="vertical" :active="1">
-            <el-step title="步骤 1"></el-step>
-            <el-step title="步骤 2"></el-step>
-            <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
+            <el-step title="丁辉祥" description="审批意见："></el-step>
+            <el-step title="胡梦溪" description="审批意见："></el-step>
+            <el-step title="李旭伟" description="审批意见："></el-step>
           </el-steps>
         </div>
       </div>
@@ -107,16 +107,16 @@
       <div class="inner-block-2">
         <div class="steps-block">
           <el-steps direction="vertical" :active="1">
-            <el-step title="丁辉祥" description="审批意见：" icon="el-icon-time"></el-step>
-            <el-step title="胡梦溪" icon="el-icon-time"></el-step>
+            <el-step title="丁辉祥" description="审批意见：" icon="el-icon-time"></el-step><input type="text" placeholder="审批意见，非必填" class="spyj" v-model="spContent"/>
+            <el-step title="胡梦溪" icon="el-icon-time" description="审批意见："></el-step>
             <el-step title="李旭伟" description="审批意见：" icon="el-icon-time"></el-step>
           </el-steps>
         </div>
       </div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" class="close">同 意</el-button>
+        <el-button type="primary" class="close" @click="qjOK">同 意</el-button>
         <el-button @click="qjShenpi = false" class="close" plain>取 消</el-button>
-        <el-button type="danger" class="close" plain>驳 回</el-button>
+        <el-button @click="qjNo" type="danger" class="close" plain>驳 回</el-button>
       </span>
     </el-dialog>
 
@@ -162,11 +162,9 @@
       <div class="inner-block-2">
         <div class="steps-block">
           <el-steps direction="vertical" :active="1">
-            <el-step title="丁慧祥" description="审批意见"></el-step>
-            <div>sdfsafd</div>
-            <el-step title="步骤 2" description="审批意见"></el-step>
-            <div>sdfsafd</div>
-            <el-step title="步骤 3" description="审批意见"></el-step>
+            <el-step title="丁辉祥" description="审批意见"></el-step>
+            <el-step title="胡梦溪" description="审批意见"></el-step>
+            <el-step title="李旭伟" description="审批意见"></el-step>
           </el-steps>
         </div>
       </div>
@@ -213,8 +211,8 @@
           <div class="zz-info">
             <div style="width: 100%;border: 1px solid;margin: 10px 0"></div>
             <div class="sk-info">收款账户明细</div>
-              <div style="margin-right: 100px;margin-left:50px;display: inline-block">姓名：xxxxx</div>
-              <div style="display: inline-block">账户：545445456456456456</div>
+            <div style="margin-right: 100px;margin-left:50px;display: inline-block">姓名：xxxxx</div>
+            <div style="display: inline-block">账户：545445456456456456</div>
             <div>
               <div style="margin-right: 100px;margin-left:50px;display: inline-block">备注：xxxxx</div>
               <div style="display: inline-block">开户行：545445456456456456</div>
@@ -225,11 +223,11 @@
       <div class="inner-block-2" style="height: 405px;bottom: 268px;">
         <div class="steps-block">
           <el-steps direction="vertical" :active="1">
-            <el-step title="步骤 1"></el-step>
+            <el-step title="丁辉祥" description="审批意见："></el-step>
             <div>sdfsafd</div>
-            <el-step title="步骤 2"></el-step>
+            <el-step title="胡梦溪" description="审批意见："></el-step>
             <div>sdfsafd</div>
-            <el-step title="步骤 3" description="这是一段很长很长很长的描述性文字"></el-step>
+            <el-step title="李旭伟" description="审批意见："></el-step>
           </el-steps>
         </div>
       </div>
@@ -254,6 +252,8 @@
     },
     data() {
       return {
+        rowId:'',
+        spContent:'',
         applyPersonName: '',
         dictTypeName: '',
         startTime: '',
@@ -363,10 +363,24 @@
         }
       },
       shenpi(row) {
+        this.rowId = row.id;
         //请假
         if (row.processType == '1') {
           this.qjShenpi = true;
-
+          let postData = {
+            id: row.id
+          }
+          this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+          this.$http.post(this.$store.state.local + '/applyProcess/viewApplyProcess', JSON.stringify(postData))
+            .then((res) => {
+              console.log(res.data.obj)
+              this.applyPersonName = res.data.obj.applyPerson;
+              this.dictTypeName = res.data.obj.dictTypeName;
+              this.startTime = res.data.obj.startTime;
+              this.endTime = res.data.obj.endTime;
+              this.totalDay = res.data.obj.totalDay;
+              this.remark = res.data.obj.remark;
+            })
         }
         //报销
         if (row.processType == '6') {
@@ -376,6 +390,36 @@
         if (row.processType == '7') {
           this.fyShenpi = true;
         }
+      },
+      qjOK() {
+        let postData = {
+          id: this.rowId,
+          status: 2,
+          content: this.spContent,
+          approveUser: this.$store.state.userInfo.id,
+        }
+        console.log(postData)
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/signApplyProcess', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.qjShenpi = false;
+          })
+      },
+      qjNo(){
+        let postData = {
+          id: this.rowId,
+          status: 3,
+          content: this.spContent,
+          approveUser: this.$store.state.userInfo.id,
+        }
+        console.log(postData)
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/signApplyProcess', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.qjShenpi = false;
+          })
       }
     }
   }
@@ -479,5 +523,13 @@
     text-align: center;
     margin-left: 140px;
     margin-bottom: 15px;
+  }
+
+  .spyj {
+    left: 34px;
+    bottom: 80px;
+    position: relative;
+    width: 350px;
+    height: 53px;
   }
 </style>

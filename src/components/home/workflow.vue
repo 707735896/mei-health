@@ -9,7 +9,7 @@
         </div>
         <div class="spbt">
           <label class="workflow-title">申请标题：</label>
-          <el-input placeholder="请输入工作标题" class="input-set"></el-input>
+          <el-input placeholder="请输入工作标题" class="input-set" v-model="title"></el-input>
         </div>
         <div class="work-content">
           <label class="workflow-label">工作流内容：</label>
@@ -20,19 +20,22 @@
           <label class="workflow-label">添加附件：</label>
           <el-upload
             class="upload-demo"
-            action="http://192.168.0.22:8004/file/upLoadFile"
+            :action="uploadUrl"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :before-remove="beforeRemove"
             multiple
             :limit="3"
             :on-exceed="handleExceed"
-            >
+            :data="upLoadData"
+            :onError="uploadError"
+            :onSuccess="uploadSuccess"
+          >
             <el-button size="small" type="primary">点击上传</el-button>
           </el-upload>
         </div>
         <div class="fj-submit-btn">
-          <el-button type="primary" class="close">提交</el-button>
+          <el-button type="primary" class="close" @click="submitWorkflow">提 交</el-button>
           <el-button class="close" plain>取 消</el-button>
         </div>
       </div>
@@ -65,11 +68,14 @@
     },
     data() {
       return {
+        upLoadData: {
+          filename: '123456',
+        },
         title: '',
         content: '',
         enclosure: '',
-        editorOption: {
-        },
+        editorOption: {},
+        uploadUrl: this.$store.state.local + '/file/upLoadFile'
       }
     },
     computed: {
@@ -89,7 +95,29 @@
       },
       beforeRemove(file, fileList) {
         return this.$confirm(`确定移除 ${ file.name }？`);
-      }
+      },
+      submitWorkflow() {
+        let postData = {
+          applyPerson: this.$store.state.userInfo.id,
+          title: this.title,
+          content: this.content,
+          processType: 0
+        };
+
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+          })
+      },
+      // 上传成功后的回调
+      uploadSuccess (response, file, fileList) {
+        console.log('上传文件', response)
+      },
+      // 上传错误
+      uploadError (response, file, fileList) {
+        console.log('上传失败，请重试！')
+      },
     }
   }
 </script>
@@ -183,7 +211,8 @@
     margin-left: 236px;
     /*background: #f5f8fa;*/
   }
-  .workflow .el-upload-list__item-name{
+
+  .workflow .el-upload-list__item-name {
     /*line-height: 40px;*/
     /*float: left;*/
     text-align: left;

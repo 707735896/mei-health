@@ -25,10 +25,10 @@
             <img src="../../assets/images/group/btn_lizhi.png">
             <span>离职申请</span>
           </a>
-          <a>
+          <router-link to="/attendance">
             <img src="../../assets/images/group/btn_kaoqin.png">
-            <span>考勤申请</span>
-          </a>
+            <span>考勤报表</span>
+          </router-link>
         </div>
       </div>
       <h4 class="work-desk-title">行政申请</h4>
@@ -265,6 +265,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let postData = {
+              applyPerson:this.$store.state.userInfo.id,
               processType: 2,
               type: this.overTimeForm.type,
               mode: this.overTimeForm.mode,
@@ -301,6 +302,7 @@
           if (valid) {
             if (this.leaveForm.type === 'txj') {
               let postData = {
+                applyPerson:this.$store.state.userInfo.id,
                 processType: 1,
                 type: this.leaveForm.type,
                 startTime: this.leaveForm.date1,
@@ -325,6 +327,7 @@
                 })
             } else {
               let postData = {
+                applyPerson:this.$store.state.userInfo.id,
                 processType: 1,
                 type: this.leaveForm.type,
                 startTime: this.leaveForm.date1,
@@ -359,6 +362,7 @@
         this.$refs[formName].validate((valid) => {
           if (valid) {
             let postData = {
+              applyPerson:this.$store.state.userInfo.id,
               processType: 3,
               type: this.goForm.type,
               startTime: this.goForm.date1,

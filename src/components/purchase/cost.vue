@@ -152,7 +152,7 @@
       },
       submitForm() {
         let postData = {
-          applyPerson: 1,
+          applyPerson:this.$store.state.userInfo.id,
           purpose: this.purpose,
           remark: this.remark,
           totalAmount: this.totalAmount,

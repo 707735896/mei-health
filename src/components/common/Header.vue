@@ -33,8 +33,7 @@
             </div>
             <div class="header-info">
                 <span class="header-img">
-                    <!--<img :src="$store.state.userInfo.portrait">-->
-                  <img src="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1534403753315&di=daba81f90b14dcdd76bcc989e93479bc&imgtype=0&src=http%3A%2F%2Fpic31.nipic.com%2F20130717%2F12788596_144714507000_2.jpg">
+                    <img :src="$store.state.userInfo.headUrl">
 
                 </span>
 
