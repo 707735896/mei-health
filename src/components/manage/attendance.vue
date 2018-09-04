@@ -9,11 +9,14 @@
           <span>返回上级页面</span>
         </div>
         <div class="attend-info">
-          <el-cascader
-            :options="options"
-            v-model="selectedOptions"
-            @change="handleChange" style="width: 120px;margin-right: 12px">
-          </el-cascader>
+          <el-select v-model="deptId" placeholder="请选择部门" style="width: 120px;margin-right: 12px">
+            <el-option
+              v-for="item in options"
+              :key="item.id"
+              :label="item.deptName"
+              :value="item.id">
+            </el-option>
+          </el-select>
           <el-date-picker
             v-model="dateTime"
             type="datetimerange"
@@ -22,7 +25,7 @@
             end-placeholder="结束日期" style="margin-right: 24px;width: 380px">
           </el-date-picker>
           <el-input v-model="userName" placeholder="输入员工姓名" style="width: 120px;margin-right: 10px"></el-input>
-          <el-button type="primary" style="margin-right: 110px">搜索</el-button>
+          <el-button type="primary" style="margin-right: 110px" @click="serach">搜索</el-button>
           <el-button type="danger" style="width: 140px" @click="exportExcel">
             <img src="../../assets/images/icon_export.png"/>
             导出报表
@@ -83,11 +86,11 @@
               </template>
             </el-table-column>
             <el-table-column
-              prop="ccsc"
+              prop="goOutDays"
               label="出差时长（天）" width="120"
               align="center">
               <template slot-scope="scope">
-                <p class="attend-p" @click="openCcsc(scope.row)">{{scope.row.ccsc}}</p>
+                <p class="attend-p" @click="openCcsc(scope.row)">{{scope.row.goOutDays}}</p>
               </template>
             </el-table-column>
           </el-table>
@@ -103,6 +106,43 @@
         </div>
       </div>
     </div>
+
+    <el-dialog :visible.sync="openDk" width="1100px" center class="dkclass">
+
+      <div class="dialog-title">打卡记录</div>
+
+      <div class="dialog-info">
+        <span style="margin-right: 55px">姓名：{{userName}}</span>
+        <span style="margin-right: 120px">职位：{{levelName}}</span>
+        <span>部门：{{departmentName}}</span>
+      </div>
+
+      <div class="dialog-content">
+        <div class="table-list" style="margin-top: 20px">
+
+          <div class="table-child" v-for="item in dkData">
+            <div style="margin-top: 10px;border-bottom: 1px solid #eeeeee" >
+              <span style="margin-right: 5px">{{item.date}}</span><span>周{{item.week}}</span>
+            </div>
+            <div v-if="item.earliestAndLastTime=='无打卡记录'" >
+              <div class="noJl">无记录</div>
+            </div>
+
+            <div v-else>
+              <div>
+                <div style="margin-top: 5px">
+                  <div class="span-title">最早</div><span>{{item.earliestTime}}</span>
+                </div>
+                <div>
+                  <div class="span-title">最晚</div><span>{{item.lastTime}}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </el-dialog>
 
     <el-dialog :visible.sync="openQj" width="900px" center>
 
@@ -262,9 +302,9 @@
   //引入数据
   export default {
     components: {
-      Header,Footer
+      Header, Footer
     },
-    created(){
+    created() {
       let postData = {
         pageSize: this.pageSize,
         pageNumber: this.pageNumber,
@@ -275,32 +315,31 @@
           console.log(res)
           this.tableData = res.data.rows;
         })
+
+      let postData1 = {
+        pageSize: 0,
+        pageNumber: 0
+      }
+      this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+      this.$http.post(this.$store.state.local + '/web/dept/deptList', JSON.stringify(postData1))
+        .then((res) => {
+          console.log(res)
+          var datas = res.data.obj;
+          this.options = datas;
+        })
     },
     data() {
       return {
         pageSize: 10,
         pageNumber: 1,
-        options: [{
-          value: 'caigoubu',
-          label: '采购部'
-        }, {
-          value: 'xingzhengbu',
-          label: '行政部'
-        }, {
-          value: 'renshibu',
-          label: '人事部'
-        }, {
-          value: 'xinxibu',
-          label: '信息部'
-        }, {
-          value: 'caiwubu',
-          label: '财务部'
-        }
-        ],
-        selectedOptions: [],
+        options: [],
+        deptId: '',
         dateTime: [],
         userName: '',
+        levelName:'',
+        departmentName:'',
         tableData: [],
+        dkData: [],
         qjData: [],
         ccData: [],
         jbData: [],
@@ -309,6 +348,7 @@
         pageSize: 10,
         total: 1,
         currentPage: 1,
+        openDk: false,
         openQj: false,
         openCc: false,
         openJb: false,
@@ -346,7 +386,21 @@
         console.log(`当前页: ${val}`);
       },
       openDkts(row) {
-        console.log(row.id);
+        this.openDk = true;
+        let postData = {
+          userId: row.id,
+          startTime: this.dateTime[0],
+          endTime:this.dateTime[1]
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/cardReport/reportDetail', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.userName = res.data.obj.userName;
+            this.levelName = res.data.obj.levelName;
+            this.departmentName = res.data.obj.departmentName;
+            this.dkData = res.data.obj.detailVOs;
+          })
       },
       openQjsc(row) {
         this.openQj = true;
@@ -359,6 +413,23 @@
       },
       openCcsc(row) {
         this.openCc = true;
+      },
+      serach(){
+        let postData = {
+          deptId:this.deptId,
+          userName:this.userName,
+          startTime: this.dateTime[0],
+          endTime:this.dateTime[1],
+          pageSize: this.pageSize,
+          pageNumber: this.pageNumber,
+        }
+        console.log(postData)
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/cardReport/reportList', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.tableData = res.data.rows;
+          })
       }
     }
   }
@@ -445,6 +516,14 @@
     margin: 0 auto;
   }
 
+  .table-child {
+    display: inline-block;
+    float: left;
+    width: 130px;
+    height: 90px;
+    border: 1px solid #e5e5e6;
+    margin: 6px;
+  }
   .table-list .el-button + .el-button, .table-list .el-button--primary {
     border-radius: 20px;
   }
@@ -472,7 +551,7 @@
     font-size: 14px;
     color: #9c9c9c;
     width: 700px;
-    margin: 0 auto 50px auto;
+    margin: 0 auto 20px auto;
     padding: 5px 0;
   }
 
@@ -493,5 +572,23 @@
   .attend-p:hover {
     background-color: #669df9;
     color: #fff;
+  }
+
+  .noJl {
+    font-size: 14px;
+    color: #db1120;
+    margin-top: 16px;
+  }
+
+  .dkclass .el-dialog--center {
+    height: 720px;
+  }
+
+  .span-title {
+    display: inline-block;
+    width: 35px;
+    margin-bottom: 5px;
+    color: #fff;
+    background-color: #4593f5;
   }
 </style>

@@ -108,6 +108,10 @@
         this.$http.post(this.$store.state.local + '/applyProcess/addApplyProcess', JSON.stringify(postData))
           .then((res) => {
             console.log(res)
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
           })
       },
       // 上传成功后的回调

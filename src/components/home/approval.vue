@@ -35,9 +35,8 @@
                   <el-table-column align="center" prop="status" label="状态" width="130"></el-table-column>
                   <el-table-column label="操作" align="center" width="300">
                     <template slot-scope="scope">
-                      <el-button size="mini" type="primary" class="circle" @click="shenpi(scope.row)">审批</el-button>
-                      <el-button size="mini" class="circle" plain @click="see(scope.row)">查看</el-button>
-                      <el-button size="mini" type="danger" plain class="circle">驳回</el-button>
+                      <el-button size="mini" class="circle" plain @click="see(scope.row)">查 看</el-button>
+                      <el-button size="mini" type="danger" plain class="circle" @click="revokeApp(scope.row)">撤 销</el-button>
                     </template>
                   </el-table-column>
                 </el-table>
@@ -175,6 +174,7 @@
       </span>
     </el-dialog>
 
+
     <el-dialog :visible.sync="fyShenpi" width="1050px" center class="Shenpi-block">
 
       <div class="allapp-title">费用申请单审批</div>
@@ -294,46 +294,54 @@
       }
     },
     created() {
-      let postData = {
-        pageSize: this.pageSize,
-        pageNumber: this.pageNumber,
-        applyPerson: this.$store.state.userInfo.id,
-        type: 0
-      }
-      this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData))
-        .then((res) => {
-          console.log(res)
-          this.tableData = res.data.obj.rows;
-        })
-
-      let postData2 = {
-        pageSize: this.pageSize,
-        pageNumber: this.pageNumber,
-        applyPerson: this.$store.state.userInfo.id,
-        type: 1
-      }
-      this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData2))
-        .then((res) => {
-          console.log(res.data.obj.rows)
-          this.tableData2 = res.data.obj.rows;
-        })
-
-      let postData3 = {
-        pageSize: this.pageSize,
-        pageNumber: this.pageNumber,
-        applyPerson: this.$store.state.userInfo.id,
-        type: 2
-      }
-      this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
-      this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData3))
-        .then((res) => {
-          console.log(res.data.obj.rows)
-          this.tableData3 = res.data.obj.rows;
-        })
+      this.getDwsp();
+      this.getWfq();
+      this.getAll();
     },
     methods: {
+      getDwsp(){
+        let postData = {
+          pageSize: this.pageSize,
+          pageNumber: this.pageNumber,
+          applyPerson: this.$store.state.userInfo.id,
+          type: 0
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.tableData = res.data.obj.rows;
+          })
+
+      },
+      getWfq(){
+        let postData2 = {
+          pageSize: this.pageSize,
+          pageNumber: this.pageNumber,
+          applyPerson: this.$store.state.userInfo.id,
+          type: 1
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData2))
+          .then((res) => {
+            console.log(res)
+            this.tableData2 = res.data.obj.rows;
+          })
+      },
+      getAll(){
+        let postData3 = {
+          pageSize: this.pageSize,
+          pageNumber: this.pageNumber,
+          applyPerson: this.$store.state.userInfo.id,
+          type: 2
+        }
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/selectApplyProcess', JSON.stringify(postData3))
+          .then((res) => {
+            console.log(res.data.obj)
+            this.tableData3 = res.data.obj.rows;
+          })
+      },
       see(row) {
         //请假
         if (row.processType == '1') {
@@ -419,6 +427,18 @@
           .then((res) => {
             console.log(res)
             this.qjShenpi = false;
+          })
+      },
+      revokeApp(row){
+        let postData = {
+          id: row.id
+        }
+        console.log(postData)
+        this.$http.defaults.headers.post['Content-Type'] = 'application/json;charse=UTF-8'
+        this.$http.post(this.$store.state.local + '/applyProcess/revokeApplyProcess', JSON.stringify(postData))
+          .then((res) => {
+            console.log(res)
+            this.getWfq();
           })
       }
     }

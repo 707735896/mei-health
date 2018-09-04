@@ -71,8 +71,9 @@
             @current-change="handleCurrentChange"
             :current-page="currentPage"
             :page-size="pageSize"
+            :page-sizes="[10, 20]"
             background
-            layout="prev, pager, next, jumper"
+            layout="total, sizes, prev, pager, next, jumper"
             :total="total" style="margin-top: 20px;">
           </el-pagination>
 
@@ -350,8 +351,8 @@
           return item.pinyin.indexOf(query) > -1;
         },
         multipleSelection: [],
-        total: 8,//默认数据总数
-        pageSize: 8,//每页的数据条数
+        total: 0,//默认数据总数
+        pageSize: 10,//每页的数据条数
         pageNumber: 1,//页数
         currentPage: 1,//默认开始页面
         activeName2: 'first',
