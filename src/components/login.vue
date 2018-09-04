@@ -223,10 +223,15 @@
   }
 
   .login-content .el-form-item__error {
-    left: 500px;
+    left: 25px;
   }
 
   .login-content .el-form-item {
     margin-bottom: 5px;
+  }
+
+  .login-content .el-form-item__content {
+    width: 360px;
+    margin: 0 auto;
   }
 </style>
